@@ -81,14 +81,12 @@
 ```
 
 - `wechat` 下有两个配置 `text_config` 和 `image_config` ，分别代表**文本对话**和**图片生成**的配置，其中：
-    - `openapi_url` 代表访问 OpenAPI
+    - `base_url` 代表访问 OpenAPI
       接口的地址，如果你可以直接访问外网，直接填 `https://api.openai.com/v1`，如果利用的是反向代理，则需要填 `https://你的
       反向代理地址/v1`
     - `auth_token` 代表你在 OpenAI 官网生成的 `SECRET KEY`
-    - `trigger_prefix` 代表在微信对话时，触发 AI 回复的前缀，比如上面效果图中的 `小贺` 会触发文本对话， `老贺` 会触发图片生成
-- `context_config` 代表文本回复中**连续对话**的配置，其中：
-    - `switch_on` 代表了是否开启连续对话，true 为开启。（开启后消耗的额度费用会增加）
-    - `cache_minute` 代表机器人**连续对话的记忆**分钟数，推荐设置为 3 分钟
+    - `trigger_prefix` 代表在微信对话时，触发 AI 回复的前缀，比如上面效果图中的 `嘎子` 会触发文本对话， `二狗子` 会触发图片生成
+- `context_status` 代表文本回复中**连续对话**的配置，true表示开启上下文聊天
 
 接下来修改 `prompt.conf.template` ，先重命名为 `prompt.conf`，然后利用编辑器修改此文件,将 ** 修改为你正确的信息:
 
