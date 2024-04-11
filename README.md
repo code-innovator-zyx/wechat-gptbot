@@ -19,6 +19,8 @@
 - **称谓识别**：可以让他完全识别聊天对象，并根据提示词回复你并带上对你的称谓
 - **会话隔离**：不同的人与小孩哥对话，系统管理不同的session
 - **生成图片压缩**：生成的图片太大，进行了压缩传输
+- **聊天模型配置化**：可以自定义聊天模型
+- **模型代理切换**：如果不方便墙，有openai的代理，可配置使用代理地址
 
 后期待实现功能(TODO)：
 - **群聊和私信消息隔离**： 不同用户的群聊信息和私信信息上下文隔离
@@ -65,22 +67,18 @@
 {
   "gpt": {
     "text_config": {
-      "base_url": "https://api.openai.com/v1",
+      "proxy_url": "",   # 代理地址，如果不配置，使用默认openai官方地址 https://api.openai.com/v1
       "auth_token": "openai token",
       "trigger_prefix": "嘎子"
     },
     "image_config": {
-      "base_url": "https://api.openai.com/v1",
+      "proxy_url": "", # 代理地址，如果不配置，使用默认openai官方地址 https://api.openai.com/v1
       "auth_token": "openai token",
       "trigger_prefix": "二狗子"
     }
   },
-  // 是否开启上下文(开启上下文理论上可永久持续对话)
   "context_status": true,
-  /* 常规聊天模型，支持配置以下两种
-  gpt-3.5-turbo
-  gpt-4-turbo-preview
-*/
+  "#base_model": "常规聊天模型，支持配置以下两种   gpt-3.5-turbo    gpt-4-turbo-preview",
   "base_model": "gpt-3.5-turbo"
 }
 ```

@@ -21,7 +21,7 @@ type Config struct {
 }
 
 type AuthConfig struct {
-	BaseURL       string `json:"base_url"`
+	ProxyUrl      string `json:"proxy_url"` //代理地址，不填使用官方地址
 	AuthToken     string `json:"auth_token"`
 	TriggerPrefix string `json:"trigger_prefix"`
 }
@@ -34,7 +34,7 @@ func (c *Config) IsValid() bool {
 	}
 
 	for _, authConfig := range authConfigs {
-		if authConfig.BaseURL == "" || authConfig.AuthToken == "" || authConfig.TriggerPrefix == "" {
+		if authConfig.AuthToken == "" || authConfig.TriggerPrefix == "" {
 			return false
 		}
 	}
@@ -45,7 +45,7 @@ func InitConfig() {
 	// 1. 读取 `config.json`
 	data, err := os.ReadFile("./config/config.json")
 	if err != nil {
-		log.Fatalf("读取配置文件失败，请检查配置文件 `config.json` 的配置, 错误信息: %+v\n", err)
+		log.Fatalf("读取配置文件失败，请检查配置文件 `/config/config.json` 的配置, 错误信息: %+v\n", err)
 	}
 	config := Config{}
 	if err = json.Unmarshal(data, &config); err != nil {

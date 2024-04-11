@@ -24,21 +24,31 @@ func (c *openAiClient) addClient(model string) *openai.Client {
 	var (
 		clientConfig openai.ClientConfig
 	)
-	fmt.Printf("add model client :%s", model)
+	fmt.Printf("add model client :%s\n", model)
+
 	switch model {
 	case openai.GPT3Dot5Turbo:
 		clientConfig = openai.DefaultConfig(config.C.Gpt.TextConfig.AuthToken)
-		clientConfig.BaseURL = config.C.Gpt.TextConfig.BaseURL
+		clientConfig.BaseURL = compareAndSwap(consts.DEFAULT_OPENAI_URL, config.C.Gpt.TextConfig.ProxyUrl)
 	case openai.CreateImageModelDallE3:
 		clientConfig = openai.DefaultConfig(config.C.Gpt.ImageConfig.AuthToken)
-		clientConfig.BaseURL = config.C.Gpt.ImageConfig.BaseURL
+		clientConfig.BaseURL = compareAndSwap(consts.DEFAULT_OPENAI_URL, config.C.Gpt.ImageConfig.ProxyUrl)
 	default:
 		clientConfig = openai.DefaultConfig(config.C.Gpt.TextConfig.AuthToken)
-		clientConfig.BaseURL = config.C.Gpt.TextConfig.BaseURL
+		clientConfig.BaseURL = compareAndSwap(consts.DEFAULT_OPENAI_URL, config.C.Gpt.TextConfig.ProxyUrl)
 	}
 	client := openai.NewClientWithConfig(clientConfig)
 	c.cs[model] = client
 	return client
+}
+
+func compareAndSwap(defaultUrl, proxyUrl string) string {
+	if proxyUrl != "" {
+		fmt.Printf("use proxyUrl %s\n", proxyUrl)
+		return proxyUrl
+	}
+	fmt.Printf("use defaultUrl %s\n", defaultUrl)
+	return defaultUrl
 }
 
 func (c *openAiClient) getClient(model string) *openai.Client {
