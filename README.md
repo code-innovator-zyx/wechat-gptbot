@@ -61,7 +61,7 @@
 
 接下来我们进行配置：
 
-把 `config.json.example` 重命名成 `config.json`，然后利用文本编辑器修改此文件：
+把 `config.json.template` 重命名成 `config.json`，然后利用文本编辑器修改此文件：
 
 ```json
 {
