@@ -32,7 +32,8 @@ func (c *openAiClient) addClient(model string) *openai.Client {
 		clientConfig = openai.DefaultConfig(config.C.Gpt.ImageConfig.AuthToken)
 		clientConfig.BaseURL = config.C.Gpt.ImageConfig.BaseURL
 	default:
-		return nil
+		clientConfig = openai.DefaultConfig(config.C.Gpt.TextConfig.AuthToken)
+		clientConfig.BaseURL = config.C.Gpt.TextConfig.BaseURL
 	}
 	client := openai.NewClientWithConfig(clientConfig)
 	c.cs[model] = client
