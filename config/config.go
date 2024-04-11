@@ -16,10 +16,7 @@ type Config struct {
 		TextConfig  AuthConfig `json:"text_config"`
 		ImageConfig AuthConfig `json:"image_config"`
 	} `json:"gpt"`
-	ContextConfig struct {
-		Open        bool `json:"open"`
-		CacheMinute int  `json:"cache_minute"`
-	} `json:"context_config"`
+	ContextStatus bool `json:"context_status"`
 }
 
 type AuthConfig struct {
@@ -39,9 +36,6 @@ func (c *Config) IsValid() bool {
 		if authConfig.BaseURL == "" || authConfig.AuthToken == "" || authConfig.TriggerPrefix == "" {
 			return false
 		}
-	}
-	if c.ContextConfig.CacheMinute <= 0 {
-		return false
 	}
 	return true
 }

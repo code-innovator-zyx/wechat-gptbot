@@ -1,0 +1,15 @@
+{
+  "gpt": {
+    "text_config": {
+      "base_url": "https://api.openai.com/v1",
+      "auth_token": "openai token",
+      "trigger_prefix": "嘎子"
+    },
+    "image_config": {
+      "base_url": "https://api.openai.com/v1",
+      "auth_token": "openai token",
+      "trigger_prefix": "二狗子"
+    }
+  },
+    "context_status": true   // 是否开启上下文(开启上下文理论上可永久持续对话)
+}

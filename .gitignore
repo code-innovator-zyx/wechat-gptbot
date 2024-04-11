@@ -21,3 +21,5 @@
 go.work
 .idea
 .git
+config/config.json
+config/prompt.conf

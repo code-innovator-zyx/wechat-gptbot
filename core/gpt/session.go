@@ -104,12 +104,12 @@ func Chat(ctx context.Context, content string) string {
 		},
 	}
 	sender := ctx.Value("sender").(string)
-	if config.C.ContextConfig.Open {
+	if config.C.ContextStatus {
 		msgs = messageCtx.buildMessage(sender, content)
 	}
 	// 发送消息
-	reply := messageCtx.client.createChat(ctx, openai.GPT3Dot5Turbo, msgs)
-	if config.C.ContextConfig.Open {
+	reply := messageCtx.client.createChat(ctx, openai.GPT4TurboPreview, msgs)
+	if config.C.ContextStatus {
 		// 4. 把回复添加进上下文
 		messageCtx.addContext(sender, openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,
