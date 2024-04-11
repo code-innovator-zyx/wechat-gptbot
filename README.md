@@ -126,6 +126,8 @@ go build . && ./wechat-gptbot
 
 至此，已经完成了小孩哥机器人的部署，快去微信中找好友试试吧！
 
+# 墙设置
+如果是在服务器上运行，服务器开了代理，需要设置环境变量 http_proxy=http://xxxxxxxx ;  https_proxy=https://xxxxxx
 
 # 联系作者
 
