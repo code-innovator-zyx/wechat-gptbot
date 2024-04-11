@@ -2,6 +2,7 @@ package gpt
 
 import (
 	"context"
+	"fmt"
 	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 	"sync"
@@ -23,7 +24,7 @@ func (c *openAiClient) addClient(model string) *openai.Client {
 	var (
 		clientConfig openai.ClientConfig
 	)
-
+	fmt.Printf("add model client :%s", model)
 	switch model {
 	case openai.GPT3Dot5Turbo:
 		clientConfig = openai.DefaultConfig(config.C.Gpt.TextConfig.AuthToken)

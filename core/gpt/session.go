@@ -108,7 +108,7 @@ func Chat(ctx context.Context, content string) string {
 		msgs = messageCtx.buildMessage(sender, content)
 	}
 	// 发送消息
-	reply := messageCtx.client.createChat(ctx, openai.GPT4TurboPreview, msgs)
+	reply := messageCtx.client.createChat(ctx, config.C.BaseModel, msgs)
 	if config.C.ContextStatus {
 		// 4. 把回复添加进上下文
 		messageCtx.addContext(sender, openai.ChatCompletionMessage{

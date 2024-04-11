@@ -75,8 +75,13 @@
       "trigger_prefix": "二狗子"
     }
   },
-  "context_status": true
   // 是否开启上下文(开启上下文理论上可永久持续对话)
+  "context_status": true,
+  /* 常规聊天模型，支持配置以下两种
+  gpt-3.5-turbo
+  gpt-4-turbo-preview
+*/
+  "base_model": "gpt-3.5-turbo"
 }
 ```
 

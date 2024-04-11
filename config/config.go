@@ -16,7 +16,8 @@ type Config struct {
 		TextConfig  AuthConfig `json:"text_config"`
 		ImageConfig AuthConfig `json:"image_config"`
 	} `json:"gpt"`
-	ContextStatus bool `json:"context_status"`
+	ContextStatus bool   `json:"context_status"`
+	BaseModel     string `json:"base_model"`
 }
 
 type AuthConfig struct {
