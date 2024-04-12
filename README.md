@@ -23,9 +23,9 @@
 - **模型代理切换**：如果不方便墙，有openai的代理，可配置使用代理地址
 
 后期待实现功能(TODO)：
+
 - **群聊和私信消息隔离**： 不同用户的群聊信息和私信信息上下文隔离
 - **暂无**： 欢迎大家给意见
-
 
 # 效果预览
 
@@ -67,13 +67,31 @@
 {
   "gpt": {
     "text_config": {
-      "proxy_url": "",   # 代理地址，如果不配置，使用默认openai官方地址 https://api.openai.com/v1
-      "auth_token": "openai token",
+      "proxy_url": "",
+      #
+      代理地址
+      ，
+      如果不配置
+      ，
+      使用默认openai官方地址
+      https: //api.openai.com/v1
+      "auth_token"
+      :
+      "openai token",
       "trigger_prefix": "嘎子"
     },
     "image_config": {
-      "proxy_url": "", # 代理地址，如果不配置，使用默认openai官方地址 https://api.openai.com/v1
-      "auth_token": "openai token",
+      "proxy_url": "",
+      #
+      代理地址
+      ，
+      如果不配置
+      ，
+      使用默认openai官方地址
+      https: //api.openai.com/v1
+      "auth_token"
+      :
+      "openai token",
       "trigger_prefix": "二狗子"
     }
   },
@@ -127,7 +145,13 @@ go build . && ./wechat-gptbot
 至此，已经完成了小孩哥机器人的部署，快去微信中找好友试试吧！
 
 # 墙设置
-如果是在服务器上运行，服务器开了代理，需要设置环境变量 http_proxy=http://xxxxxxxx ;  https_proxy=https://xxxxxx
+
+如果是在服务器上运行，服务器开了代理，需要设置环境变量
+
+```bash
+export http_proxy=http://127.0.0.1:xxxx
+export https_proxy=https://127.0.0.1:xxxx
+```
 
 # 联系作者
 
