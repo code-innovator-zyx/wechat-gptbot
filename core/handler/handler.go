@@ -59,16 +59,17 @@ func checkMessageType(msg *openwechat.Message) bool {
 	//  如果是艾特我的消息
 	if msg.IsAt() {
 		msg.Content = msg.Content[len("@年年"):]
+		msg.Content = strings.TrimLeft(msg.Content, " ")
 		return true
 	}
 	// 如果包含了我的唤醒词
+	msg.Content = strings.TrimLeft(msg.Content, " ")
 	if strings.HasPrefix(msg.Content, config.C.Gpt.TextConfig.TriggerPrefix) {
-		msg.Content = strings.TrimPrefix(msg.Content, config.C.Gpt.TextConfig.TriggerPrefix)
+		msg.Content = strings.TrimLeft(msg.Content, config.C.Gpt.TextConfig.TriggerPrefix)
 		return true
 	}
 
 	if strings.HasPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix) {
-		msg.Content = strings.TrimPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix)
 		return true
 	}
 
@@ -78,7 +79,7 @@ func checkMessageType(msg *openwechat.Message) bool {
 // 通过语义判断是否是文生图的需求
 func checkCreateImage(msg *openwechat.Message) bool {
 	if strings.HasPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix) {
-		msg.Content = strings.TrimPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix)
+		msg.Content = strings.TrimLeft(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix)
 		return true
 	}
 	return false
