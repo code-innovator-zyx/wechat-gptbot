@@ -11,9 +11,11 @@ import (
 	"strings"
 	"wechat-gptbot/config"
 	"wechat-gptbot/consts"
-	"wechat-gptbot/core/gpt"
+	"wechat-gptbot/core/svc"
 	"wechat-gptbot/utils"
 )
+
+var Context *svc.ServiceContext
 
 func MessageHandler(msg *openwechat.Message) {
 	// 判断是否需要我处理的对话
@@ -85,7 +87,7 @@ func checkCreateImage(msg *openwechat.Message) bool {
 // 回复文本
 func textReplyHandler(ctx context.Context, msg *openwechat.Message) {
 	sender := ctx.Value("sender").(string)
-	reply := gpt.Chat(ctx, utils.BuildPersonalMessage(sender, msg.Content))
+	reply := Context.Session.Chat(ctx, utils.BuildPersonalMessage(sender, msg.Content))
 	fmt.Printf("[text] Response: %s\n", reply) // 输出回复消息到日志
 	_, err := msg.ReplyText(utils.BuildResponseMessage(sender, msg.Content, reply))
 	if err != nil {
@@ -97,22 +99,22 @@ func textReplyHandler(ctx context.Context, msg *openwechat.Message) {
 // 回复图片
 func imageReplyHandler(ctx context.Context, msg *openwechat.Message) {
 	prompt := strings.TrimSpace(msg.Content)
-	url := gpt.CreateImage(ctx, prompt)
-	if url == "" {
+	uri := Context.Session.CreateImage(ctx, prompt)
+	if uri == "" {
 		logrus.Infof("[image] Response: url 为空")
 		msg.ReplyText(consts.ErrTips)
 		return
 	}
-	logrus.Infof("[image] Response: url = %s", url)
+	logrus.Infof("[image] Response: url = %s", uri)
 	reader := bytes.Buffer{}
-	err := utils.CompressImage(url, &reader)
+	err := utils.CompressImage(uri, &reader)
 	if err != nil {
 		logrus.Infof("[image] downloadImage err, err=%+v", err)
 		msg.ReplyText(consts.ErrTips)
 		return
 	}
 	fu := msg.ReplyImage
-	if checkFile(url) {
+	if checkFile(uri) {
 		fu = msg.ReplyFile
 	}
 	_, err = fu(&reader)

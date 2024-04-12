@@ -5,6 +5,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"wechat-gptbot/config"
 	"wechat-gptbot/core/gpt"
+	"wechat-gptbot/core/handler"
+	"wechat-gptbot/core/svc"
 	"wechat-gptbot/logger"
 )
 
@@ -14,7 +16,6 @@ import (
 * @Date:   2024/4/8 17:12
 * @Package:
  */
-
 func Initialize() {
 	// 初始化日志
 	logger.InitLogrus(logger.Config{
@@ -25,7 +26,7 @@ func Initialize() {
 	// 初始化配置文件
 	config.InitConfig()
 	// 初始化会话上下文管理器
-	gpt.InitSession()
+	handler.Context = svc.NewServiceContext()
 	// 初始化提示词
 	gpt.PromptMessage = openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleSystem,

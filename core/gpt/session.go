@@ -14,84 +14,91 @@ import (
 * @Date:   2023/11/11 18:05
 * @Package: 支持会话上下文管理 暂时只保留最近3次对话信息
  */
-var messageCtx *session
 
-// 存放用户上下文
-type session struct {
-	sync.RWMutex
-	client *openAiClient           // 会话客户端
-	ctx    map[string]*userMessage // 管理用户上下文
+type Session interface {
+	Chat(ctx context.Context, content string) string       // 对话
+	CreateImage(ctx context.Context, prompt string) string // 生成图片，返回URL
 }
 
-func InitSession() {
+// Session 存放用户上下文
+type session struct {
+	sync.Mutex                         // 用户的创建需要加锁
+	client     *openAiClient           // 会话客户端
+	ctx        map[string]*userMessage // 管理用户上下文
+}
+
+func NewSession() Session {
 	clients := &openAiClient{}
 	gptConfigValues := reflect.ValueOf(config.C.Gpt)
 	numField := gptConfigValues.NumField()
 	clients.cs = make(map[string]*openai.Client, numField)
-	messageCtx = &session{
+	return &session{
+		Mutex:  sync.Mutex{},
 		ctx:    make(map[string]*userMessage),
 		client: clients,
 	}
 }
 
+// 获取用户
+func (s *session) getUserContext(userName string) *userMessage {
+	s.Lock()
+	defer s.Unlock()
+	if msg, ok := s.ctx[userName]; ok {
+		return msg
+	}
+	msg := newUserMessage(userName)
+	s.ctx[userName] = msg
+	return msg
+}
+
 // 用户级消息
 type userMessage struct {
-	mu   sync.Mutex                     // 加锁 防止上下文顺序紊乱  todo
-	user string                         // 用户
-	ctx  []openai.ChatCompletionMessage // 用户聊天的上下文 最多只保留6条记录，3组对话
+	sync.Mutex                                // 加锁 防止上下文顺序紊乱 一个用户只能拿到响应后才能再次提问
+	user       string                         // 用户
+	ctx        []openai.ChatCompletionMessage // 用户聊天的上下文 最多只保留6条记录，3组对话
 }
 
 // 新建一个用户级消息
-func newUserMessage(user string, msg openai.ChatCompletionMessage) *userMessage {
+func newUserMessage(user string) *userMessage {
 	return &userMessage{
 		user: user,
 		ctx: []openai.ChatCompletionMessage{{
 			Role:    openai.ChatMessageRoleSystem,
 			Content: config.Prompt,
-		}, msg},
-		mu: sync.Mutex{},
+		}},
+		Mutex: sync.Mutex{},
 	}
 }
 
-// 添加上下文
-func (c *session) addContext(userName string, currentMessage openai.ChatCompletionMessage) {
-	var (
-		msg *userMessage
-		ok  bool
-	)
-	if msg, ok = c.ctx[userName]; ok {
-		// 直接追加到上下文中
-		msg.ctx = append(msg.ctx, currentMessage)
-		// 最多保存6条上下文
-		if len(msg.ctx) > 6 {
-			msg.ctx = msg.ctx[len(msg.ctx)-6:]
-			// 将prompt 作为第一句传给机器人
-			msg.ctx[0] = PromptMessage
-		}
-		return
+// 给用户追加上下文
+func (um *userMessage) addContext(currentMessage openai.ChatCompletionMessage) {
+	um.ctx = append(um.ctx, currentMessage)
+	// 最多保存6条上下文
+	if len(um.ctx) > 6 {
+		um.ctx = um.ctx[len(um.ctx)-6:]
+		// 将prompt 作为第一句传给机器人
+		um.ctx[0] = PromptMessage
 	}
-	// 当前没有上下文，新建一个用户级上下消息体
-	c.ctx[userName] = newUserMessage(userName, currentMessage)
 }
-
-var PromptMessage openai.ChatCompletionMessage
 
 // 构建上下文到消息体
-func (c *session) buildMessage(userName, content string) []openai.ChatCompletionMessage {
+func (um *userMessage) buildMessage(userName, content string) []openai.ChatCompletionMessage {
 	// 将当前对话加入上下文
-	c.addContext(userName, openai.ChatCompletionMessage{
+	um.addContext(openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleUser,
 		Content: content,
 	})
 	fmt.Println("=====" + userName + "=======")
-	for i, ctx := range c.ctx[userName].ctx {
+	for i, ctx := range um.ctx {
 		fmt.Printf("%d     %s\n", i, ctx.Content)
 	}
 	fmt.Println("=====" + userName + "=======")
-	return c.ctx[userName].ctx
+	return um.ctx
 }
 
-func Chat(ctx context.Context, content string) string {
+var PromptMessage openai.ChatCompletionMessage
+
+func (s *session) Chat(ctx context.Context, content string) string {
 	// 默认不带上下文
 	msgs := []openai.ChatCompletionMessage{
 		{
@@ -104,14 +111,19 @@ func Chat(ctx context.Context, content string) string {
 		},
 	}
 	sender := ctx.Value("sender").(string)
+	// 获取用户上下文
+	um := s.getUserContext(sender)
 	if config.C.ContextStatus {
-		msgs = messageCtx.buildMessage(sender, content)
+		// 只有在用户开启上下文的时候，追加上下文需要加锁,得到回复追加上下文后才进行锁的释放
+		um.Lock()
+		defer um.Unlock()
+		msgs = um.buildMessage(sender, content)
 	}
 	// 发送消息
-	reply := messageCtx.client.createChat(ctx, config.C.BaseModel, msgs)
+	reply := s.client.createChat(ctx, config.C.BaseModel, msgs)
 	if config.C.ContextStatus {
 		// 4. 把回复添加进上下文
-		messageCtx.addContext(sender, openai.ChatCompletionMessage{
+		um.addContext(openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,
 			Content: reply,
 		})
@@ -119,6 +131,6 @@ func Chat(ctx context.Context, content string) string {
 	return reply
 }
 
-func CreateImage(ctx context.Context, prompt string) string {
-	return messageCtx.client.createImage(ctx, openai.CreateImageModelDallE3, prompt)
+func (s *session) CreateImage(ctx context.Context, prompt string) string {
+	return s.client.createImage(ctx, openai.CreateImageModelDallE3, prompt)
 }
