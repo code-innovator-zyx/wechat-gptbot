@@ -94,7 +94,6 @@ func textReplyHandler(ctx context.Context, msg *openwechat.Message) {
 	if err != nil {
 		logrus.Infof("msg.ReplyText Error: %+v", err)
 	}
-	msg.RevokeMsg()
 }
 
 // 回复图片

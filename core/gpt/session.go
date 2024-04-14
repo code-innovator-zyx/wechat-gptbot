@@ -41,8 +41,13 @@ func NewSession() Session {
 
 // 获取用户
 func (s *session) getUserContext(userName string) *userMessage {
+
+	if msg, ok := s.ctx[userName]; ok {
+		return msg
+	}
 	s.Lock()
 	defer s.Unlock()
+	// 双检加锁，防止加锁的过程中已经创建了用户
 	if msg, ok := s.ctx[userName]; ok {
 		return msg
 	}
