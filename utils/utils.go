@@ -141,11 +141,11 @@ func BuildPersonalMessage(userName, content string) string {
 
 func BuildResponseMessage(userName, content, reply string) string {
 	builder := strings.Builder{}
-	builder.WriteString("[")
-	builder.WriteString(userName)
-	builder.WriteString("]:")
-	builder.WriteString(content)
-	builder.WriteString("\n---------------------------------------------\n")
+	//builder.WriteString("[")
+	//builder.WriteString(userName)
+	//builder.WriteString("]:")
+	//builder.WriteString(content)
+	//builder.WriteString("\n---------------------------------------------\n")
 	builder.WriteString(reply)
 	return builder.String()
 }

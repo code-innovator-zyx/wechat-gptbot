@@ -43,13 +43,21 @@ func MessageHandler(msg *openwechat.Message) {
 	if checkCreateImage(msg) {
 		childHandler = imageReplyHandler
 	}
-	childHandler(ctx, msg)
+	// 异步处理
+	go childHandler(ctx, msg)
 }
 
 // 判断是否是发给我的消息
 func checkMessageType(msg *openwechat.Message) bool {
 	if !msg.IsText() {
 		// 目前只能处理文本对话
+		doAction(msg)
+		return false
+	}
+	if msg.Content == "ping" {
+		fmt.Printf("receive ping from %s", msg.FromUserName)
+	}
+	if msg.IsSendBySelf() {
 		return false
 	}
 	if !msg.IsSendByGroup() {
