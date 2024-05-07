@@ -3,11 +3,12 @@ package gpt
 import (
 	"context"
 	"fmt"
-	"github.com/sashabaranov/go-openai"
-	"github.com/sirupsen/logrus"
 	"sync"
 	"wechat-gptbot/config"
 	"wechat-gptbot/consts"
+
+	"github.com/sashabaranov/go-openai"
+	"github.com/sirupsen/logrus"
 )
 
 type openAiClient struct {

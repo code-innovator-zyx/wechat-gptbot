@@ -1,6 +1,9 @@
 package handler
 
-import "github.com/eatmoreapple/openwechat"
+import (
+	"github.com/eatmoreapple/openwechat"
+	"time"
+)
 
 /*
 * @Author: zouyx
@@ -9,13 +12,25 @@ import "github.com/eatmoreapple/openwechat"
 * @Package:
  */
 
-func doAction(msg *openwechat.Message) {
-	if msg.IsTickledMe() {
-		msg.ReplyText("别拍啦，小屁股都开花啦")
-		return
+func KeepAlive(bot *openwechat.Self) {
+
+	ticker := time.NewTicker(time.Minute * 5)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			heartBeat(bot)
+		}
 	}
-	if msg.IsJoinGroup() {
-		msg.ReplyText("欢迎欢迎，热烈欢迎")
-		return
+}
+func heartBeat(bot *openwechat.Self) {
+	// 获取公众号
+	if mps, _ := bot.Mps(false); mps != nil {
+		for i := range mps {
+			if mps[i].NickName == "跳跳是只cat" {
+				mps[i].SendText("ping")
+				return
+			}
+		}
 	}
 }

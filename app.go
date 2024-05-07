@@ -20,7 +20,9 @@ func main() {
 	core.Initialize()
 	bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式
 	// 定义消息处理函数
-	bot.MessageHandler = handler.MessageHandler
+	// 获取消息处理器
+	dispatcher := handler.NewMessageMatchDispatcher()
+	bot.MessageHandler = dispatcher.AsMessageHandler()
 	bot.UUIDCallback = consoleQrCode // 注册登陆二维码回调
 	// 登录回调
 	bot.SyncCheckCallback = nil
@@ -33,6 +35,8 @@ func main() {
 	if nil != err {
 		panic(err)
 	}
+
+	go handler.KeepAlive(self)
 	logrus.Infof("login success %+v", *self.User)
 	bot.Block()
 }
