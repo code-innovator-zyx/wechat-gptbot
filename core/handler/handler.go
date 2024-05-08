@@ -135,7 +135,10 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 	}
 	//  如果是艾特我的消息
 	if msg.IsAt() {
-		msg.Content = msg.Content[len("@年年"):]
+		prefix := fmt.Sprintf("@%s", msg.Owner().NickName)
+		if strings.HasPrefix(msg.Content, prefix) {
+			msg.Content = msg.Content[len(prefix):]
+		}
 		msg.Content = strings.TrimLeft(msg.Content, " ")
 		return true, checkCreateImage(msg)
 	}
