@@ -154,6 +154,9 @@ export http_proxy=http://127.0.0.1:xxxx
 export https_proxy=https://127.0.0.1:xxxx
 ```
 
+# others 
+
+微信登录时常在夜晚掉线，内置一个保活功能，需要关注公众号   ``跳跳是只cat`` ,有需要的自行关注，项目会对公众号进行请求心跳保活
 # 联系作者
 
 - 本项目地址为： https://github.com/code-innovator-zyx/wechat-gptbot ，欢迎大家 Star，提交 PR
