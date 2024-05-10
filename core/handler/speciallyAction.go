@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/eatmoreapple/openwechat"
 	"time"
+	"wechat-gptbot/config"
 )
 
 /*
@@ -27,7 +28,7 @@ func heartBeat(bot *openwechat.Self) {
 	// 获取公众号
 	if mps, _ := bot.Mps(false); mps != nil {
 		for i := range mps {
-			if mps[i].NickName == "跳跳是只cat" {
+			if mps[i].NickName == config.C.KeepaliveRobot {
 				mps[i].SendText("ping")
 				return
 			}

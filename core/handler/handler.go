@@ -139,7 +139,6 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 		if strings.HasPrefix(msg.Content, prefix) {
 			msg.Content = msg.Content[len(prefix):]
 		}
-		msg.Content = strings.TrimLeft(msg.Content, " ")
 		return true, checkCreateImage(msg)
 	}
 
@@ -158,6 +157,10 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 
 // 通过语义判断是否是文生图的需求
 func checkCreateImage(msg *openwechat.Message) bool {
+	msg.Content = strings.TrimPrefix(msg.Content, "\u2005")
+	fmt.Println("=====")
+	fmt.Println(msg.Content)
+	fmt.Println("=====")
 	if strings.HasPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix) {
 		return true
 	}
