@@ -115,14 +115,14 @@ func (dispatcher *MessageMatchDispatcher) image(message *openwechat.MessageConte
 func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 	// 如果包含了我的唤醒词
 	msg.Content = strings.TrimLeft(msg.Content, " ")
+	sender, err := msg.Sender()
+	if nil != err {
+		logrus.Error(err.Error())
+	}
 	if !msg.IsText() {
 		return false, false
 	}
 	if msg.Content == "pong" {
-		sender, err := msg.Sender()
-		if nil != err {
-			logrus.Error(err.Error())
-		}
 		logrus.Infof("receive pong from %s", sender.NickName)
 		return false, false
 	}
@@ -131,6 +131,10 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 	}
 	if !msg.IsSendByGroup() {
 		// 私信消息
+		// 私信消息不要管公众号消息
+		if sender.IsMP() {
+			return false, false
+		}
 		return true, checkCreateImage(msg)
 	}
 	//  如果是艾特我的消息
