@@ -2,15 +2,18 @@ package utils
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/chai2010/webp"
 	"github.com/sirupsen/logrus"
 	"image/jpeg"
 	"image/png"
 	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"path"
 	"strings"
+	"time"
 )
 
 type Element interface {
@@ -148,4 +151,25 @@ func BuildResponseMessage(userName, content, reply string) string {
 	//builder.WriteString("\n---------------------------------------------\n")
 	builder.WriteString(reply)
 	return builder.String()
+}
+
+func FakeIP() string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	// 随便找的国内IP段：223.64.0.0 - 223.117.255.255
+	ip := fmt.Sprintf("223.%d.%d.%d", r.Intn(54)+64, r.Intn(254), r.Intn(254))
+	return ip
+}
+
+func GetFromData(data map[string]string) io.Reader {
+	formData := url.Values{}
+	for k, v := range data {
+		formData.Add(k, v)
+	}
+	return strings.NewReader(formData.Encode())
+}
+
+func GetRandInt64(n int64) int64 {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return r.Int63n(n)
+
 }
