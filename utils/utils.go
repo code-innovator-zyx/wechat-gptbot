@@ -16,8 +16,11 @@ import (
 	"time"
 )
 
+var r *rand.Rand
+
 func init() {
-	rand.Seed(time.Now().Unix())
+	source := rand.NewSource(time.Now().UnixNano())
+	r = rand.New(source)
 }
 
 type Element interface {
@@ -159,7 +162,7 @@ func BuildResponseMessage(userName, content, reply string) string {
 
 func FakeIP() string {
 	// 随便找的国内IP段：223.64.0.0 - 223.117.255.255
-	return fmt.Sprintf("223.%d.%d.%d", rand.Intn(54)+64, rand.Intn(254), rand.Intn(254))
+	return fmt.Sprintf("223.%d.%d.%d", r.Intn(54)+64, r.Intn(254), r.Intn(254))
 }
 
 func GetFromData(data map[string]string) io.Reader {
@@ -171,6 +174,6 @@ func GetFromData(data map[string]string) io.Reader {
 }
 
 func GetRandInt64(n int64) int64 {
-	return rand.Int63n(n)
+	return r.Int63n(n)
 
 }
