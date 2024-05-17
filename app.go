@@ -25,7 +25,7 @@ func main() {
 	bot.MessageHandler = dispatcher.AsMessageHandler()
 	bot.UUIDCallback = consoleQrCode // 注册登陆二维码回调
 	// 登录回调
-	bot.SyncCheckCallback = nil
+	//bot.SyncCheckCallback = nil
 	reloadStorage := openwechat.NewFileHotReloadStorage("token.json")
 	if err := bot.HotLogin(reloadStorage, openwechat.NewRetryLoginOption()); nil != err {
 		panic(err)
