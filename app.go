@@ -42,7 +42,7 @@ func main() {
 }
 
 func consoleQrCode(uuid string) {
-	println("访问下面网址扫描二维码登录")
+	openwechat.PrintlnQrcodeUrl(uuid)
 	q, _ := qrcode.New("https://login.weixin.qq.com/l/"+uuid, qrcode.Medium)
 	fmt.Println(q.ToSmallString(false))
 }

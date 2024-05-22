@@ -10,7 +10,7 @@
       "auth_token": "openai token",
       "trigger_prefix": "二狗子"
     }
-  },
+  }
     "context_status": true,
     "#base_model": "常规聊天模型，支持配置以下两种   gpt-3.5-turbo    gpt-4-turbo-preview gpt-4o",
     "base_model": "gpt-3.5-turbo"
