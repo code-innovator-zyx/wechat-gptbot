@@ -8,6 +8,7 @@ import (
 	"wechat-gptbot/core/handler"
 	"wechat-gptbot/core/svc"
 	"wechat-gptbot/logger"
+	"wechat-gptbot/streamlit_web"
 )
 
 /*
@@ -32,4 +33,5 @@ func Initialize() {
 		Role:    openai.ChatMessageRoleSystem,
 		Content: config.Prompt,
 	}
+	go streamlit_web.RunStreamlit()
 }
