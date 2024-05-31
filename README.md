@@ -37,7 +37,7 @@
 ## 优点：(交互不用适配手机端太爽了，配了公网访问，手机能直接访问修改配置了)
 ``docker 构建命令
 sudo docker-compose -f build.yaml build
-``
+``![img.png](docs/登录.png)
 ![img.png](ui.png/img.png)
 ![img.png](docs/img.png)
 # 聊天效果预览
