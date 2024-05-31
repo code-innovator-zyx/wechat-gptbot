@@ -1,0 +1,19 @@
+[[pages]]
+path = "streamlit_app/home.py"
+name = "主页"
+icon = "🏡"
+
+[[pages]]
+path = "streamlit_app/pages/gpt_setting.py"
+name = "模型管理"
+icon = "🤖"
+
+[[pages]]
+path = "streamlit_app/pages/prompt.py"
+name = "提示词管理"
+icon = "📝"
+
+[[pages]]
+path = "streamlit_app/pages/plugins.py"
+name = "插件管理"
+icon = "👍🏻"

@@ -7,6 +7,7 @@ import (
 	"github.com/skip2/go-qrcode"
 	"wechat-gptbot/core"
 	"wechat-gptbot/core/handler"
+	"wechat-gptbot/server"
 )
 
 /*
@@ -19,6 +20,8 @@ func main() {
 	// 初始化核心配置
 	core.Initialize()
 	bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式
+	// 启动监听端口
+	go server.NewApiServer(bot).Run()
 	// 定义消息处理函数
 	// 获取消息处理器
 	dispatcher := handler.NewMessageMatchDispatcher()
@@ -42,7 +45,6 @@ func main() {
 }
 
 func consoleQrCode(uuid string) {
-	openwechat.PrintlnQrcodeUrl(uuid)
 	q, _ := qrcode.New("https://login.weixin.qq.com/l/"+uuid, qrcode.Medium)
 	fmt.Println(q.ToSmallString(false))
 }

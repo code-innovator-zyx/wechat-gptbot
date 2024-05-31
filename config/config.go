@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 )
 
 var (
@@ -12,6 +13,7 @@ var (
 )
 
 type Config struct {
+	*sync.RWMutex
 	Gpt struct {
 		TextConfig  AuthConfig `json:"text_config"`
 		ImageConfig AuthConfig `json:"image_config"`
@@ -19,6 +21,18 @@ type Config struct {
 	ContextStatus  bool   `json:"context_status"`
 	BaseModel      string `json:"base_model"`
 	KeepaliveRobot string `json:"keepalive_robot"`
+}
+
+func (c *Config) GetBaseModel() string {
+	c.RLock()
+	defer c.RUnlock()
+	return c.BaseModel
+}
+
+func (c *Config) SetBaseModel(model string) {
+	c.Lock()
+	defer c.Unlock()
+	c.BaseModel = model
 }
 
 type AuthConfig struct {
@@ -48,7 +62,9 @@ func InitConfig() {
 	if err != nil {
 		log.Fatalf("读取配置文件失败，请检查配置文件 `/config/config.json` 的配置, 错误信息: %+v\n", err)
 	}
-	config := Config{}
+	config := Config{
+		RWMutex: new(sync.RWMutex),
+	}
 	if err = json.Unmarshal(data, &config); err != nil {
 		log.Fatalf("读取配置文件失败，请检查配置文件 `config.json` 的格式, 错误信息: %+v\n", err)
 	}

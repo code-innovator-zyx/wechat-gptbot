@@ -1,11 +1,10 @@
-package streamlit_web
+package streamlit_app
 
 import (
 	"bufio"
 	"fmt"
 	"io"
 	"os/exec"
-	"path/filepath"
 )
 
 /*
@@ -21,14 +20,8 @@ func RunStreamlit() {
 		fmt.Printf("系统没有安装python，无法启动webui")
 		return
 	}
-	// 获取python文件的绝对路径
-	absPath, err := filepath.Abs("./streamlit_web/home.py")
-	if err != nil {
-		panic(err)
-	}
 	// 创建一个 exec.Command 实例
-	cmd := exec.Command("streamlit", "run", absPath)
-
+	cmd := exec.Command("streamlit", "run", "./streamlit_app/home.py")
 	// 获取命令的标准输出和标准错误输出管道
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
@@ -66,11 +59,14 @@ func RunStreamlit() {
 
 // 打印输出
 func pyOutput(pipe io.ReadCloser) {
+	defer pipe.Close()
 	scanner := bufio.NewScanner(pipe)
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())
 	}
-	pipe.Close()
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("Error reading from pipe: %v\n", err)
+	}
 }
 
 func checkPythonInstallation() bool {
