@@ -125,7 +125,7 @@ func (s *session) Chat(ctx context.Context, content string) string {
 		msgs = um.buildMessage(sender, content)
 	}
 	// 发送消息
-	reply := s.client.createChat(ctx, config.C.BaseModel, msgs)
+	reply := s.client.createChat(ctx, config.C.GetBaseModel(), msgs)
 	if config.C.ContextStatus {
 		// 4. 把回复添加进上下文
 		um.addContext(openai.ChatCompletionMessage{
