@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/chai2010/webp v1.1.1
 	github.com/eatmoreapple/openwechat v1.4.6
+	github.com/gin-gonic/gin v1.10.0
 	github.com/sashabaranov/go-openai v1.20.5
 	github.com/sirupsen/logrus v1.9.3
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
@@ -17,7 +18,6 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.10.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
