@@ -34,6 +34,7 @@
 - **暂无**： 欢迎大家给意见
 
 # 集成ui界面展示(需要安装Python 环境，如果懒得装环境，就用docker构建，所有的环境我都打包成了基础镜像了，见dockerfile)
+## 优点：(交互不用适配手机端太爽了，配了公网访问，手机能直接访问修改配置了)
 ``docker 构建命令
 sudo docker-compose -f build.yaml build
 ``
