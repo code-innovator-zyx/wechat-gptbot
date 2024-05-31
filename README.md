@@ -39,7 +39,7 @@
 sudo docker-compose -f build.yaml build
 ``
 ![img.png](ui.png/img.png)
-![img.png](模型.png/img.png)
+![img.png](docs/img.png)
 # 聊天效果预览
 
 先看使用效果，之后再介绍如何部署以及配置。下图包含了**群聊对话**和**私聊对话**和画图的一些例子：
