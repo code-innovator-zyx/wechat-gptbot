@@ -2,6 +2,8 @@
 
 > 项目地址: https://github.com/code-innovator-zyx/wechat-gptbot
 
+# new：增加了ui界面,切换到 [streamlit](https://github.com/code-innovator-zyx/wechat-gptbot/tree/streamlit) 分支 
+
 # 需求征集中，跟风网上主打一个听劝，友友们都是产品，欢迎提issues，都安排
 # 简介
 
