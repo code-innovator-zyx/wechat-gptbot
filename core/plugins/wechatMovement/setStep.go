@@ -1,4 +1,4 @@
-package main
+package wechatMovement
 
 import (
 	"fmt"
@@ -12,8 +12,8 @@ import (
 * @Package:
  */
 func main() {
-	app := zeepLife.NewZeppLife("1003941268@knownsec.com", "4f4ezha!")
-	err := app.SetSteps(7500)
+	app := zeepLife.NewZeppLife("zouyx@knownsec.com", "4f4ezha!")
+	err := app.SetSteps(63291)
 	if err != nil {
 		panic(err)
 	}

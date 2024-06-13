@@ -75,7 +75,7 @@ func InitConfig() {
 	// 2. 读取 prompt.txt
 	prompt, err := os.ReadFile("./config/prompt.conf")
 	if err != nil {
-		log.Fatalf("读取配置文件失败，请检查配置文件 `prompt.txt` 的配置, 错误信息: %+v\n", err)
+		log.Fatalf("读取配置文件失败，请检查配置文件 `prompt.conf` 的配置, 错误信息: %+v\n", err)
 	}
 	Prompt = string(prompt)
 }

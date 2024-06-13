@@ -38,9 +38,8 @@ func main() {
 	if nil != err {
 		panic(err)
 	}
-
 	go handler.KeepAlive(self)
-	logrus.Infof("login success %+v", *self.User)
+	logrus.Infof("login success %s,%s,%s", self.User, self.City, self.Province)
 	bot.Block()
 }
 

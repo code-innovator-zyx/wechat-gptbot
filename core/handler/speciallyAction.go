@@ -1,9 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/eatmoreapple/openwechat"
 	"time"
-	"wechat-gptbot/config"
+	"wechat-gptbot/utils"
 )
 
 /*
@@ -15,7 +16,7 @@ import (
 
 func KeepAlive(bot *openwechat.Self) {
 
-	ticker := time.NewTicker(time.Minute * 5)
+	ticker := time.NewTicker(time.Minute * 1)
 	defer ticker.Stop()
 	for {
 		select {
@@ -25,13 +26,8 @@ func KeepAlive(bot *openwechat.Self) {
 	}
 }
 func heartBeat(bot *openwechat.Self) {
-	// 获取公众号
-	if mps, _ := bot.Mps(false); mps != nil {
-		for i := range mps {
-			if mps[i].NickName == config.C.KeepaliveRobot {
-				mps[i].SendText("ping")
-				return
-			}
-		}
-	}
+	// 向文件传输助手发送消息，不要再关注公众号了
+	// 生成要发送的消息
+	outMessage := fmt.Sprintf("防微信自动退出登录[%d]", utils.GetRandInt64(1000))
+	bot.SendTextToFriend(openwechat.NewFriendHelper(bot), outMessage)
 }

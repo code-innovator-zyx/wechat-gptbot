@@ -2,6 +2,7 @@ package gpt
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"wechat-gptbot/config"
@@ -63,7 +64,7 @@ func (c *openAiClient) getClient(model string) *openai.Client {
 }
 
 // 发送聊天信息到Openai
-func (c *openAiClient) createChat(ctx context.Context, model string, messages []openai.ChatCompletionMessage) string {
+func (c *openAiClient) createChat(ctx context.Context, model string, messages []openai.ChatCompletionMessage) (string, error) {
 	resp, err := c.getClient(model).CreateChatCompletion(ctx, openai.ChatCompletionRequest{
 		Model:           model,
 		Messages:        messages,
@@ -73,13 +74,13 @@ func (c *openAiClient) createChat(ctx context.Context, model string, messages []
 	})
 	if err != nil {
 		logrus.Infof("openAIClient.CreateChatCompletion err=%+v\n", err)
-		return consts.ErrTips
+		return "", errors.New(consts.ErrTips)
 	}
 	if len(resp.Choices) == 0 {
 		logrus.Infof("resp is err, resp=%+v\n", resp)
-		return consts.ErrTips
+		return "", errors.New(consts.ErrTips)
 	}
-	return resp.Choices[0].Message.Content
+	return resp.Choices[0].Message.Content, nil
 }
 
 // 文生图模型 返回URL

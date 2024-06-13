@@ -46,7 +46,6 @@ func NewMessageMatchDispatcher() *MessageMatchDispatcher {
 		return message.IsJoinGroup()
 	}, self.joinGroup)
 	dispatcher.SetAsync(true)
-	// 注册心跳函数
 	return self
 }
 func (dispatcher *MessageMatchDispatcher) trick(message *openwechat.MessageContext) {
@@ -122,10 +121,6 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 	if !msg.IsText() {
 		return false, false
 	}
-	if msg.Content == "pong" {
-		logrus.Infof("receive pong from %s", sender.NickName)
-		return false, false
-	}
 	if msg.IsSendBySelf() {
 		return false, false
 	}
@@ -162,9 +157,6 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 // 通过语义判断是否是文生图的需求
 func checkCreateImage(msg *openwechat.Message) bool {
 	msg.Content = strings.TrimPrefix(msg.Content, "\u2005")
-	fmt.Println("=====")
-	fmt.Println(msg.Content)
-	fmt.Println("=====")
 	if strings.HasPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix) {
 		return true
 	}

@@ -175,5 +175,4 @@ func GetFromData(data map[string]string) io.Reader {
 
 func GetRandInt64(n int64) int64 {
 	return r.Int63n(n)
-
 }

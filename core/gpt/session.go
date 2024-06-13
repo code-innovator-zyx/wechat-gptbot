@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"sync"
 	"wechat-gptbot/config"
+	"wechat-gptbot/core/plugins"
 )
 
 /*
@@ -14,6 +15,7 @@ import (
 * @Date:   2023/11/11 18:05
 * @Package: 支持会话上下文管理 暂时只保留最近3次对话信息
  */
+const MaxSession = 6
 
 type Session interface {
 	Chat(ctx context.Context, content string) string       // 对话
@@ -22,9 +24,11 @@ type Session interface {
 
 // Session 存放用户上下文
 type session struct {
-	sync.Mutex                         // 用户的创建需要加锁
-	client     *openAiClient           // 会话客户端
-	ctx        map[string]*userMessage // 管理用户上下文
+	sync.RWMutex                                // 用户的创建需要加锁
+	client         *openAiClient                // 会话客户端
+	ctx            map[string]*userMessage      // 管理用户上下文
+	prompt         openai.ChatCompletionMessage // 管理提示词
+	pluginRegistry *plugins.PluginManger        // 插件注册器
 }
 
 func NewSession() Session {
@@ -32,10 +36,22 @@ func NewSession() Session {
 	gptConfigValues := reflect.ValueOf(config.C.Gpt)
 	numField := gptConfigValues.NumField()
 	clients.cs = make(map[string]*openai.Client, numField)
+	registry := plugins.NewPluginRegistry()
 	return &session{
-		Mutex:  sync.Mutex{},
-		ctx:    make(map[string]*userMessage),
-		client: clients,
+		RWMutex:        sync.RWMutex{},
+		ctx:            make(map[string]*userMessage),
+		client:         clients,
+		prompt:         initPrompt(),
+		pluginRegistry: registry,
+	}
+}
+func initPrompt() openai.ChatCompletionMessage {
+	// 获取所有插件信息
+	pluginsInfo := plugins.Manger.PluginPrompt()
+	prompt := fmt.Sprintf(config.Prompt, pluginsInfo)
+	return openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleSystem,
+		Content: prompt,
 	}
 }
 
@@ -51,9 +67,13 @@ func (s *session) getUserContext(userName string) *userMessage {
 	if msg, ok := s.ctx[userName]; ok {
 		return msg
 	}
-	msg := newUserMessage(userName)
-	s.ctx[userName] = msg
+	msg := s.newUserMessage(userName)
 	return msg
+}
+
+// Prompt 获取提示词  todo:将插件写入提示词
+func (s *session) Prompt() openai.ChatCompletionMessage {
+	return s.prompt
 }
 
 // 用户级消息
@@ -64,56 +84,50 @@ type userMessage struct {
 }
 
 // 新建一个用户级消息
-func newUserMessage(user string) *userMessage {
-	return &userMessage{
-		user: user,
-		ctx: []openai.ChatCompletionMessage{{
-			Role:    openai.ChatMessageRoleSystem,
-			Content: config.Prompt,
-		}},
+func (s *session) newUserMessage(user string) *userMessage {
+	msg := &userMessage{
+		user:  user,
+		ctx:   []openai.ChatCompletionMessage{s.prompt},
 		Mutex: sync.Mutex{},
 	}
+	s.ctx[user] = msg
+	return msg
 }
 
 // 给用户追加上下文
-func (um *userMessage) addContext(currentMessage openai.ChatCompletionMessage) {
+func (um *userMessage) addContext(currentMessage, prompt openai.ChatCompletionMessage) {
 	um.ctx = append(um.ctx, currentMessage)
 	// 最多保存6条上下文
-	if len(um.ctx) > 6 {
-		um.ctx = um.ctx[len(um.ctx)-6:]
-		// 将prompt 作为第一句传给机器人
-		um.ctx[0] = PromptMessage
+	if len(um.ctx) > MaxSession {
+		um.ctx = um.ctx[len(um.ctx)-MaxSession:]
+		// 将prompt 作为上下文第一条
+		um.ctx[0] = prompt
 	}
 }
 
 // 构建上下文到消息体
-func (um *userMessage) buildMessage(userName, content string) []openai.ChatCompletionMessage {
-	// 将当前对话加入上下文
-	um.addContext(openai.ChatCompletionMessage{
-		Role:    openai.ChatMessageRoleUser,
-		Content: content,
-	})
+func (um *userMessage) buildMessage(userName string, currentMsg openai.ChatCompletionMessage) []openai.ChatCompletionMessage {
+	msgs := append(um.ctx, currentMsg)
 	fmt.Println("=====" + userName + "=======")
-	for i, ctx := range um.ctx {
+	for i, ctx := range msgs {
+		if i <= 0 {
+			continue
+		}
 		fmt.Printf("%d     %s\n", i, ctx.Content)
 	}
 	fmt.Println("=====" + userName + "=======")
-	return um.ctx
+	return msgs
 }
 
-var PromptMessage openai.ChatCompletionMessage
-
 func (s *session) Chat(ctx context.Context, content string) string {
+	currentMsg := openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleUser,
+		Content: content,
+	}
 	// 默认不带上下文
 	msgs := []openai.ChatCompletionMessage{
-		{
-			Role:    openai.ChatMessageRoleSystem,
-			Content: config.Prompt,
-		},
-		{
-			Role:    openai.ChatMessageRoleUser,
-			Content: content,
-		},
+		s.Prompt(),
+		currentMsg,
 	}
 	sender := ctx.Value("sender").(string)
 	// 获取用户上下文
@@ -122,17 +136,28 @@ func (s *session) Chat(ctx context.Context, content string) string {
 		// 只有在用户开启上下文的时候，追加上下文需要加锁,得到回复追加上下文后才进行锁的释放
 		um.Lock()
 		defer um.Unlock()
-		msgs = um.buildMessage(sender, content)
+		msgs = um.buildMessage(sender, currentMsg)
 	}
 	// 发送消息
-	reply := s.client.createChat(ctx, config.C.GetBaseModel(), msgs)
+	reply, err := s.client.createChat(ctx, config.C.GetBaseModel(), msgs)
+	if nil != err {
+		// 发送失败嘞
+		return err.Error()
+	}
+	// 发送成功，可以讲请求和回复加入上下文
 	if config.C.ContextStatus {
-		// 4. 把回复添加进上下文
+		// 如果请求成功才把问题回复都添加进上下文
+		if resetMsg, ok := plugins.Manger.DoPlugin(reply); ok {
+			reply = resetMsg
+			goto RETURN
+		}
+		um.addContext(currentMsg, s.Prompt())
 		um.addContext(openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,
 			Content: reply,
-		})
+		}, s.Prompt())
 	}
+RETURN:
 	return reply
 }
 
