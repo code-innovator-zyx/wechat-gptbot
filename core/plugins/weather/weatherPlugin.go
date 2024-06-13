@@ -13,7 +13,7 @@ const WeatherPluginName = "WeatherPlugin"
 
 /*
 * @Author: zouyx
-* @Email: zouyx@knowsec.com
+* @Email: 1003941268@qq.com
 * @Date:   2024/6/12 18:08
 * @Package:
  */
