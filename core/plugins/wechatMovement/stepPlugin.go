@@ -48,7 +48,7 @@ func (s StepPlugin) Name() string {
 }
 
 func (s StepPlugin) Scenes() string {
-	return "修改微信运动步数"
+	return "设置修改微信运动步数"
 }
 
 func (s StepPlugin) Args() []interface{} {

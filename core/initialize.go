@@ -5,6 +5,7 @@ import (
 	"wechat-gptbot/config"
 	"wechat-gptbot/core/handler"
 	"wechat-gptbot/core/plugins"
+	"wechat-gptbot/core/plugins/news"
 	"wechat-gptbot/core/plugins/weather"
 	"wechat-gptbot/core/svc"
 	"wechat-gptbot/logger"
@@ -25,7 +26,7 @@ func Initialize() {
 		WriteFile:  false,
 	})
 	// 初始化插件
-	plugins.Manger.Register(weather.NewWeatherPlugin())
+	plugins.Manger.Register(weather.NewPlugin(), news.NewPlugin())
 	// 初始化配置文件
 	config.InitConfig()
 	// 初始化会话上下文管理器

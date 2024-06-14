@@ -4,6 +4,57 @@
 
 最近家里迎来了一个新的生命，为了和她沟通交流，我创建了一个微信机器人账号，方便家人提前与她互动。这个项目不仅可以帮助培养她的微信账号，以后还能直接将微信号过继给她。☺️
 
+## 新功能
+| ![img.png](docs/天气.png)   |                    |
+| ![img.png](docs/新闻.png)  |                    |
+- 时间: 2024年 6月14日
+- 功能描述：自定义插件(目前有 天气预报、每日热点新闻)
+- 可定制化: 可以自定义插件，在目录`core/plugins`目录下根据模版实现几个接口注册进插件管理器就行了
+
+例如：
+
+```go
+// 新增热点新闻插件
+package news
+
+import (
+	"wechat-gptbot/core/plugins"
+)
+
+const NewsPluginName = "NewsPlugin"
+
+type plugin struct {
+}
+
+func NewPlugin() plugins.PluginSvr {
+	return &plugin{}
+}
+
+// 执行插件
+func (p plugin) Do(i ...interface{}) string {
+	return "插件返回的结果"
+}
+
+// 插件名称
+func (p plugin) Name() string {
+	return NewsPluginName
+}
+
+// 插件场景描述
+func (p plugin) Scenes() string {
+	return "每日热点新闻"
+}
+
+// 插件是否可用
+func (p plugin) IsUseful() bool {
+	return true
+}
+
+// 运行插件需要的参数解释 比如我执行天气预报插件的参数  return []interface{}{"要查询天气的城市"}
+func (p plugin) Args() []interface{} {
+	return nil
+}
+```
 ## 项目优势
 
 - **部署简单**：使用 Golang 编译的二进制文件，避免了其他语言依赖众多库的麻烦，直接运行即可。
@@ -54,7 +105,7 @@
 |----|--------------------|
 | ![私聊](docs/私聊.jpg) |                    |
 | ![画图](docs/画图.jpg) |                    |
-| ![img.png](docs/天气.png)   |                    |
+
 
 ## 开始部署
 

@@ -73,8 +73,10 @@ func (m *PluginManger) DoPlugin(msg string) (resetMsg string, ok bool) {
 }
 
 // Register 注册插件
-func (m *PluginManger) Register(svr PluginSvr) {
-	m.Store(svr.Name(), svr)
+func (m *PluginManger) Register(svr ...PluginSvr) {
+	for i := range svr {
+		m.Store(svr[i].Name(), svr[i])
+	}
 }
 
 // ResetPlugin 修改插件

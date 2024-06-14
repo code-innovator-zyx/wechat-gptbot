@@ -18,14 +18,14 @@ const WeatherPluginName = "WeatherPlugin"
 * @Package:
  */
 
-type WeatherPlugin struct {
+type Plugin struct {
 	url string
 }
 
-func NewWeatherPlugin() plugins.PluginSvr {
-	return &WeatherPlugin{"http://139.9.115.47:80/wechat-helper/weather"}
+func NewPlugin() plugins.PluginSvr {
+	return &Plugin{"http://139.9.115.47:80/wechat-helper/weather"}
 }
-func (s WeatherPlugin) Do(args ...interface{}) string {
+func (s Plugin) Do(args ...interface{}) string {
 	fmt.Printf("查询 %s 天气 \n", args[0])
 	if len(args) <= 0 {
 		return "请输入查询的地址"
@@ -46,18 +46,18 @@ func (s WeatherPlugin) Do(args ...interface{}) string {
 	fmt.Println("data", data["msg"])
 	return data["msg"]
 }
-func (s WeatherPlugin) IsUseful() bool {
+func (s Plugin) IsUseful() bool {
 	return true
 }
 
-func (s WeatherPlugin) Name() string {
+func (s Plugin) Name() string {
 	return WeatherPluginName
 }
 
-func (s WeatherPlugin) Scenes() string {
+func (s Plugin) Scenes() string {
 	return "查询城市天气"
 }
 
-func (s WeatherPlugin) Args() []interface{} {
+func (s Plugin) Args() []interface{} {
 	return []interface{}{"要查询天气的城市"}
 }
