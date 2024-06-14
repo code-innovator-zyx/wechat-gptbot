@@ -30,7 +30,7 @@ func (p plugin) Do(i ...interface{}) string {
 	builder.WriteString("-----今日热点-----\n")
 
 	for _, news := range newsRes.List[0].NewsList[1:] {
-		builder.WriteString(fmt.Sprintf("\n%d %s\nℹ️ %s\n🔗 %s\n ",
+		builder.WriteString(fmt.Sprintf("\n%d ℹ️%s\n⏰ %s\n🔗 %s\n ",
 			news.HotEvent.Ranking, news.HotEvent.Title, news.Time, news.Url))
 	}
 	return builder.String()

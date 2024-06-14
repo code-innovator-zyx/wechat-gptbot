@@ -1,4 +1,4 @@
-package weather
+package news
 
 import (
 	"testing"
@@ -12,6 +12,6 @@ import (
  */
 
 func TestWeatherPlugin_Do(t *testing.T) {
-	plugin := NewPlugin()
-	t.Log(plugin.Do("成都"))
+	p := NewPlugin()
+	t.Log(p.Do("成都"))
 }
