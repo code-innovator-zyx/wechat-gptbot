@@ -30,14 +30,14 @@ func NewStepPlugin(account, pwd string, min, max int) plugins.PluginSvr {
 	source := rand.NewSource(time.Now().UnixNano())
 	return &StepPlugin{account: account, password: pwd, min: min, max: max, Rand: rand.New(source)}
 }
-func (s StepPlugin) Do(args ...interface{}) string {
+func (s StepPlugin) Do(args ...interface{}) []string {
 	app := zeepLife.NewZeppLife(s.account, s.password)
 	step := s.Rand.Intn(s.max-s.min+1) + s.min
 	err := app.SetSteps(step)
 	if err != nil {
 		logrus.Errorf("failed to set step")
 	}
-	return fmt.Sprintf("已经成功帮你设置微信步数: %d", step)
+	return []string{fmt.Sprintf("已经成功帮你设置微信步数: %d", step)}
 }
 func (s StepPlugin) IsUseful() bool {
 	return s.account != "" && s.password != "" && s.min != 0 && s.max != 0

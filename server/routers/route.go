@@ -15,6 +15,12 @@ func InitRoute(bot *openwechat.Bot) *gin.Engine {
 		})
 		r.GET("/current-model", controller.CurrentModel)
 		r.POST("/reset-model", controller.ResetModel)
+		r.GET("/friends", func(context *gin.Context) {
+			controller.GetFriends(context, bot)
+		})
+		r.GET("/weather-cron-setting", controller.GetWeatherSetting)
+		r.DELETE("/weather-receiver", controller.DeleteWeatherReceiver)
+		r.POST("/weather-receiver", controller.AddWeatherReceiver)
 	}
 	return router
 }

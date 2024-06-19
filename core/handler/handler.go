@@ -66,12 +66,14 @@ func (dispatcher *MessageMatchDispatcher) text(message *openwechat.MessageContex
 	if message.IsSendByGroup() {
 		sender, err = message.SenderInGroup()
 	}
-	reply := Context.Session.Chat(context.WithValue(context.TODO(), "sender", sender.NickName), utils.BuildPersonalMessage(sender.NickName, message.Content))
-	fmt.Printf("[text] Response: %s\n", reply) // 输出回复消息到日志
-	_, err = message.ReplyText(utils.BuildResponseMessage(sender.NickName, message.Content, reply))
-	if err != nil {
-		logrus.Infof("msg.ReplyText Error: %+v", err)
+	for _, reply := range Context.Session.Chat(context.WithValue(context.TODO(), "sender", sender.NickName), utils.BuildPersonalMessage(sender.NickName, message.Content)) {
+		fmt.Printf("[text] Response: %s\n", reply) // 输出回复消息到日志
+		_, err = message.ReplyText(reply)
+		if err != nil {
+			logrus.Infof("msg.ReplyText Error: %+v", err)
+		}
 	}
+
 }
 
 func (dispatcher *MessageMatchDispatcher) image(message *openwechat.MessageContext) {

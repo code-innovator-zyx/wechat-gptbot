@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -10,6 +11,11 @@ import (
 var (
 	C      *Config
 	Prompt string
+)
+
+const (
+	defaultNewCron     = "0 30 7 1/1 * ?"
+	defaultWeatherCron = "0 0 8 1/1 * ?"
 )
 
 type Config struct {
@@ -21,6 +27,25 @@ type Config struct {
 	ContextStatus  bool   `json:"context_status"`
 	BaseModel      string `json:"base_model"`
 	KeepaliveRobot string `json:"keepalive_robot"`
+	CronConfig     struct {
+		WeatherConfig WeatherCronConfig `json:"weather_config"`
+		NewsConfig    NewsCronConfig    `json:"news_config"`
+	}
+}
+
+// WeatherCronConfig 天气预报定时任务配置
+type WeatherCronConfig struct {
+	Users []struct {
+		Name string `json:"name"` // 用户名
+		City string `json:"city"` // 城市
+	} `json:"users"`
+	Spec string `json:"spec"` // cron 表达式
+}
+
+type NewsCronConfig struct {
+	Users  []string // 用户名
+	Groups []string // 群名称
+	Spec   string   `json:"spec"` // cron 表达式
 }
 
 func (c *Config) GetBaseModel() string {
@@ -56,6 +81,16 @@ func (c *Config) IsValid() bool {
 	return true
 }
 
+func (c *Config) CheckCronValid() {
+	if c.CronConfig.WeatherConfig.Spec == "" {
+		c.CronConfig.WeatherConfig.Spec = defaultWeatherCron
+	}
+
+	if c.CronConfig.NewsConfig.Spec == "" {
+		c.CronConfig.NewsConfig.Spec = defaultNewCron
+	}
+}
+
 func InitConfig() {
 	// 1. 读取 `config.json`
 	data, err := os.ReadFile("./config/config.json")
@@ -78,4 +113,15 @@ func InitConfig() {
 		log.Fatalf("读取配置文件失败，请检查配置文件 `prompt.conf` 的配置, 错误信息: %+v\n", err)
 	}
 	Prompt = string(prompt)
+
+	// 读取定时任务配置表
+	cronConfig, err := os.ReadFile("./config/cron.json")
+	if err != nil {
+		log.Fatalf("读取配置文件失败，请检查配置文件 `cron.json` 的配置, 错误信息: %+v\n", err)
+	}
+	err = json.Unmarshal(cronConfig, &C.CronConfig)
+	if err != nil {
+		fmt.Println(err)
+	}
+	C.CheckCronValid()
 }

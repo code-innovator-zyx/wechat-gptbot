@@ -24,7 +24,7 @@ const (
 
 type PluginSvr interface {
 	// Do 执行插件
-	Do(...interface{}) string
+	Do(...interface{}) []string
 	// Name 获取插件名称
 	Name() string
 	// Scenes 使用场景
@@ -49,9 +49,9 @@ func init() {
 	Manger = NewPluginRegistry()
 }
 
-func (m *PluginManger) DoPlugin(msg string) (resetMsg string, ok bool) {
+func (m *PluginManger) DoPlugin(msg []string) (resetMsg []string, ok bool) {
 	var pp pluginPrompt
-	err := jsoniter.UnmarshalFromString(msg, &pp)
+	err := jsoniter.UnmarshalFromString(msg[0], &pp)
 	if err != nil {
 		return msg, false
 	}
@@ -59,7 +59,7 @@ func (m *PluginManger) DoPlugin(msg string) (resetMsg string, ok bool) {
 		if key.(string) == pp.Name {
 			plugin := value.(PluginSvr)
 			if !plugin.IsUseful() {
-				resetMsg = fmt.Sprintf("%s 不可用状态", plugin.Name())
+				resetMsg = []string{fmt.Sprintf("%s 不可用状态", plugin.Name())}
 				return false
 			}
 			// 执行插件
@@ -70,6 +70,13 @@ func (m *PluginManger) DoPlugin(msg string) (resetMsg string, ok bool) {
 		return true
 	})
 	return
+}
+
+func (m *PluginManger) GetPluginSvr(name string) PluginSvr {
+	if svr, ok := m.Load(name); ok {
+		return svr.(PluginSvr)
+	}
+	return nil
 }
 
 // Register 注册插件

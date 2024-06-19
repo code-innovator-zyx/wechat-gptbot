@@ -18,7 +18,7 @@ import (
 const MaxSession = 6
 
 type Session interface {
-	Chat(ctx context.Context, content string) string       // 对话
+	Chat(ctx context.Context, content string) []string     // 对话
 	CreateImage(ctx context.Context, prompt string) string // 生成图片，返回URL
 }
 
@@ -119,7 +119,7 @@ func (um *userMessage) buildMessage(userName string, currentMsg openai.ChatCompl
 	return msgs
 }
 
-func (s *session) Chat(ctx context.Context, content string) string {
+func (s *session) Chat(ctx context.Context, content string) []string {
 	currentMsg := openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleUser,
 		Content: content,
@@ -142,7 +142,7 @@ func (s *session) Chat(ctx context.Context, content string) string {
 	reply, err := s.client.createChat(ctx, config.C.GetBaseModel(), msgs)
 	if nil != err {
 		// 发送失败嘞
-		return err.Error()
+		return []string{err.Error()}
 	}
 	// 发送成功，可以讲请求和回复加入上下文
 	if config.C.ContextStatus {
@@ -154,7 +154,7 @@ func (s *session) Chat(ctx context.Context, content string) string {
 		um.addContext(currentMsg, s.Prompt())
 		um.addContext(openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,
-			Content: reply,
+			Content: reply[0],
 		}, s.Prompt())
 	}
 RETURN:

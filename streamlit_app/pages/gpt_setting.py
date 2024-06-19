@@ -1,6 +1,8 @@
 import streamlit as st
 from util import *
-
+res = check_login()
+if res["code"] == 511:
+    st.switch_page("home.py")
 st.set_page_config(page_title='聊天模型配置', page_icon='🔩', layout='wide',
                    initial_sidebar_state="expanded")
 

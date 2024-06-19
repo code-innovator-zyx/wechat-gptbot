@@ -13,20 +13,18 @@ import (
 * @Date:   2024/5/29 18:06
 * @Package: 模型管理
  */
-type BaseResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-}
+
 type CurrentModelResponse struct {
-	BaseResponse
+	Code int       `json:"code"`
+	Msg  string    `json:"msg"`
 	Data ModelInfo `json:"data"`
 }
 
 // CurrentModel 获取当前模型
 func CurrentModel(c *gin.Context) {
 	c.JSON(http.StatusOK, CurrentModelResponse{
-		BaseResponse: BaseResponse{Code: 200,
-			Msg: "ok"},
+		Code: 200,
+		Msg:  "ok",
 		Data: ModelInfo{config.C.GetBaseModel(), openai.CreateImageModelDallE3}})
 }
 
@@ -41,8 +39,6 @@ func ResetModel(c *gin.Context) {
 	if info.TextModel != "" {
 		config.C.SetBaseModel(info.TextModel)
 	}
-	c.JSON(http.StatusOK, BaseResponse{
-		Code: 200,
-		Msg:  "ok",
-	})
+	c.JSON(http.StatusOK, gin.H{"code": 200,
+		"msg": "ok"})
 }

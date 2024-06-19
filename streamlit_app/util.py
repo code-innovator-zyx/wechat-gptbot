@@ -3,6 +3,7 @@ import secrets
 from typing import Dict, Any
 
 import requests
+import streamlit
 from streamlit import secrets
 
 api_port = os.getenv("APIPORT", 8502)
@@ -25,9 +26,28 @@ def get_models():
     return response.json()
 
 
+@streamlit.cache_data(ttl="1h")
+def get_friends():
+    response = call_api("get", "friends")
+    return response.json()
+
+
 def reset_models(text_model):
-    response = call_api("post", "reset-model", json={"text_model": text_model})
+    response = call_api("post", "reset_model", json={"text_model": text_model})
     return response.status_code
+
+
+def get_weather_cron_setting():
+    response = call_api("get", "weather_cron_setting")
+    return response.json()
+
+
+def delete_weather_receiver(name):
+    call_api("delete", "weather_receiver", params={"name": name})
+
+
+def add_weather_receiver(name, city):
+    call_api("post", "weather_receiver", json={"name": name, "city": city})
 
 
 def text_models():

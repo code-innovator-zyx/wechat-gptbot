@@ -20,20 +20,29 @@ func NewPlugin() plugins.PluginSvr {
 	return &plugin{"https://i.news.qq.com/gw/event/pc_hot_ranking_list?ids_hash=&offset=0&page_size=50&appver=15.5_qqnews_7.1.60&rank_id=hot"}
 }
 
-func (p plugin) Do(i ...interface{}) string {
+func (p plugin) Do(...interface{}) []string {
 	newsRes, err := fetchNews(p.url)
 	if err != nil {
 		log.Fatalf("error fetching news: %v", err)
-		return "热点新闻获取失败"
+		return []string{"热点新闻获取失败"}
 	}
 	builder := strings.Builder{}
-	builder.WriteString("-----今日热点-----\n")
-
-	for _, news := range newsRes.List[0].NewsList[1:] {
+	reply := make([]string, 0, 5)
+	for index, news := range newsRes.List[0].NewsList[1:] {
+		if index%5 == 0 {
+			builder.WriteString(fmt.Sprintf("-----------------  实时热点 【%d】--------------------\n\n", len(reply)+1))
+		}
 		builder.WriteString(fmt.Sprintf("\n%d ℹ️%s\n⏰ %s\n🔗 %s\n ",
 			news.HotEvent.Ranking, news.HotEvent.Title, news.Time, news.Url))
+		if index%5 == 4 {
+			reply = append(reply, builder.String())
+			builder.Reset()
+		}
 	}
-	return builder.String()
+	if builder.Len() != 0 {
+		reply = append(reply, builder.String())
+	}
+	return reply
 }
 
 func (p plugin) Name() string {
@@ -41,7 +50,7 @@ func (p plugin) Name() string {
 }
 
 func (p plugin) Scenes() string {
-	return "每日热点新闻"
+	return "获取实时热点新闻"
 }
 
 func (p plugin) IsUseful() bool {

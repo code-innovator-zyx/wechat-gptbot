@@ -1,0 +1,24 @@
+{
+  "weather_config": {
+    "users": [
+      {
+        "name": "mortal",
+        "city": "成都"
+      },
+      {
+        "name": "妈妈",
+        "city": "泸州"
+      }
+    ],
+    "spec": "0 0 8 1/1 * ?"
+  },
+  "news_config": {
+    "users": [
+      "mortal"
+    ],
+    "groups": [
+      "三口之家"
+    ],
+    "spec": "0 0 8 1/1 * ?"
+  }
+}

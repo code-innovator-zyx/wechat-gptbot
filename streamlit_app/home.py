@@ -18,11 +18,13 @@ with col2:
         unsafe_allow_html=True)
     res = check_login()
     if res["code"] == 511:
+        st.session_state["login"] = "failed"
         hide_pages(["主页", "模型配置", "提示词配置"])
         st.image(res["data"]["qr_url"], caption="扫描二维码登录微信机器人")
         time.sleep(2)  # 2秒刷新一次
         st.rerun()
     else:
+        st.session_state["login"] = "success"
         # 展示用户名
         st.markdown(
             f"<h1 style='text-align: center; color: green; font-size:28px;'>【{res['data']['user_name']}】登录成功,现在您"
