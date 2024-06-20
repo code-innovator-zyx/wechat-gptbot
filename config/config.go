@@ -143,12 +143,4 @@ func InitConfig() {
 		fmt.Println(err)
 	}
 	C.CheckCronValid()
-	user := SportAccount{
-		"mortal",
-		"zouyx@knownsec.com",
-		"4f4ezha!",
-		30000,
-		50000,
-	}
-	C.CronConfig.SportConfig.Users = append(C.CronConfig.SportConfig.Users, user)
 }
