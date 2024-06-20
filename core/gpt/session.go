@@ -171,13 +171,13 @@ func (s *session) CreateImage(ctx context.Context, prompt string) string {
 func (s *session) GenerateQuartzCron(describe string) string {
 	msgs := []openai.ChatCompletionMessage{
 		{Role: openai.ChatMessageRoleSystem,
-			Content: "你是一个Quartz Cron表达式专家,我会向你进行描述，请根据我的描述生成表达式，并且只返回表达式，例如 0 30 7 1/1 * ?"},
+			Content: "你是一个Quartz Cron表达式专家,我会向你进行描述，请根据我的描述生成表达式，并且只返回表达式字符串，例如 0 30 7 1/1 * ?"},
 		{
 			Role:    openai.ChatMessageRoleUser,
 			Content: describe,
 		},
 	}
-	chat, err := s.client.createChat(context.Background(), config.C.GetBaseModel(), msgs)
+	chat, err := s.client.createChat(context.Background(), openai.GPT3Dot5Turbo, msgs)
 	if err != nil {
 		return ""
 	}
@@ -191,7 +191,7 @@ func (s *session) DescribeQuartzCron(cron string) string {
 			Content: "你是一个Quartz Cron表达式专家,我会给你一个cron表达式，用自然语言描述,只需要返回执行时间，不要过多解释,例如：提问：0 0 8 1/1 * ? 回答：每天早上8点"},
 		{Role: openai.ChatMessageRoleUser, Content: cron},
 	}
-	chat, err := s.client.createChat(context.Background(), config.C.GetBaseModel(), msgs)
+	chat, err := s.client.createChat(context.Background(), openai.GPT3Dot5Turbo, msgs)
 	if err != nil {
 		return ""
 	}

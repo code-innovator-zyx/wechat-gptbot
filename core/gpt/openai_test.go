@@ -2,6 +2,7 @@ package gpt
 
 import (
 	"context"
+	"fmt"
 	"github.com/sashabaranov/go-openai"
 	"testing"
 )
@@ -29,5 +30,6 @@ func Test_Chat(t *testing.T) {
 			Content: "你是一个Quartz Cron表达式专家,我会向你进行描述，请根据我的描述生成表达式，并且只返回表达式，例如 0 30 7 1/1 * ?"},
 		{Role: openai.ChatMessageRoleUser, Content: "每天早上八点准时推送"},
 	}
-	t.Log(clients.createChat(context.Background(), openai.GPT3Dot5Turbo, msgs))
+	strs, _ := clients.createChat(context.Background(), openai.GPT3Dot5Turbo, msgs)
+	fmt.Printf("%s", strs[0])
 }

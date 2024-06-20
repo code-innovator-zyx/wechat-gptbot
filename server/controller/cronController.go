@@ -195,7 +195,7 @@ func ResetCron(c *gin.Context) {
 	}
 	// 根据描述生成 表达式
 	cron := handler.Context.Session.GenerateQuartzCron(req.Desc)
-	logrus.Infof("%s   生成的 cron 表达式 %s", req.Desc, *spec)
+	logrus.Infof("%s   生成的 cron 表达式 %s", req.Desc, cron)
 	*spec = cron
 	// 重置 定时器
 	handler.Context.CronServer.ResetPluginCron(req.PluginName, *spec)
