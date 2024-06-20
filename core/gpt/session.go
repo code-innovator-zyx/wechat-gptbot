@@ -20,6 +20,8 @@ const MaxSession = 6
 type Session interface {
 	Chat(ctx context.Context, content string) []string     // 对话
 	CreateImage(ctx context.Context, prompt string) string // 生成图片，返回URL
+	GenerateQuartzCron(describe string) string
+	DescribeQuartzCron(cron string) string
 }
 
 // Session 存放用户上下文
@@ -163,4 +165,35 @@ RETURN:
 
 func (s *session) CreateImage(ctx context.Context, prompt string) string {
 	return s.client.createImage(ctx, openai.CreateImageModelDallE3, prompt)
+}
+
+// GenerateQuartzCron 根据描述生成cron 表达式
+func (s *session) GenerateQuartzCron(describe string) string {
+	msgs := []openai.ChatCompletionMessage{
+		{Role: openai.ChatMessageRoleSystem,
+			Content: "你是一个Quartz Cron表达式专家,我会向你进行描述，请根据我的描述生成表达式，并且只返回表达式，例如 0 30 7 1/1 * ?"},
+		{
+			Role:    openai.ChatMessageRoleUser,
+			Content: describe,
+		},
+	}
+	chat, err := s.client.createChat(context.Background(), config.C.GetBaseModel(), msgs)
+	if err != nil {
+		return ""
+	}
+	return chat[len(chat)-1]
+}
+
+// DescribeQuartzCron
+func (s *session) DescribeQuartzCron(cron string) string {
+	msgs := []openai.ChatCompletionMessage{
+		{Role: openai.ChatMessageRoleSystem,
+			Content: "你是一个Quartz Cron表达式专家,我会给你一个cron表达式，用自然语言描述,只需要返回执行时间，不要过多解释,例如：提问：0 0 8 1/1 * ? 回答：每天早上8点"},
+		{Role: openai.ChatMessageRoleUser, Content: cron},
+	}
+	chat, err := s.client.createChat(context.Background(), config.C.GetBaseModel(), msgs)
+	if err != nil {
+		return ""
+	}
+	return chat[len(chat)-1]
 }

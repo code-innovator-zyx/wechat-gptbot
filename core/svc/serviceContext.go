@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"wechat-gptbot/core/cron"
 	"wechat-gptbot/core/gpt"
 )
 
@@ -12,7 +13,8 @@ import (
  */
 
 type ServiceContext struct {
-	Session gpt.Session
+	Session    gpt.Session
+	CronServer *cron.CronSvr
 }
 
 func NewServiceContext() *ServiceContext {

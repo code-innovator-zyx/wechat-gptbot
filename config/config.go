@@ -16,6 +16,7 @@ var (
 const (
 	defaultNewCron     = "0 30 7 1/1 * ?"
 	defaultWeatherCron = "0 0 8 1/1 * ?"
+	defaultSportCron   = "0 26 17 ? * ?"
 )
 
 type Config struct {
@@ -28,9 +29,22 @@ type Config struct {
 	BaseModel      string `json:"base_model"`
 	KeepaliveRobot string `json:"keepalive_robot"`
 	CronConfig     struct {
-		WeatherConfig WeatherCronConfig `json:"weather_config"`
-		NewsConfig    NewsCronConfig    `json:"news_config"`
+		WeatherConfig WeatherCronConfig     `json:"weather_config"`
+		NewsConfig    NewsCronConfig        `json:"news_config"`
+		SportConfig   WechatSportCronConfig `json:"sport_config"`
 	}
+}
+type WechatSportCronConfig struct {
+	Users []SportAccount `json:"users"`
+	Spec  string         `json:"spec"` // cron 表达式
+	Desc  string
+}
+type SportAccount struct {
+	Name    string `json:"name"`    // 绑定微信名
+	Account string `json:"account"` // 账号
+	Pwd     string `json:"pwd"`     // 密码
+	Min     int    `json:"min"`     //  最少步数
+	Max     int    `json:"max"`     // 最多步数
 }
 
 // WeatherCronConfig 天气预报定时任务配置
@@ -40,12 +54,14 @@ type WeatherCronConfig struct {
 		City string `json:"city"` // 城市
 	} `json:"users"`
 	Spec string `json:"spec"` // cron 表达式
+	Desc string
 }
 
 type NewsCronConfig struct {
 	Users  []string // 用户名
 	Groups []string // 群名称
 	Spec   string   `json:"spec"` // cron 表达式
+	Desc   string
 }
 
 func (c *Config) GetBaseModel() string {
@@ -89,6 +105,9 @@ func (c *Config) CheckCronValid() {
 	if c.CronConfig.NewsConfig.Spec == "" {
 		c.CronConfig.NewsConfig.Spec = defaultNewCron
 	}
+	if c.CronConfig.SportConfig.Spec == "" {
+		c.CronConfig.SportConfig.Spec = defaultSportCron
+	}
 }
 
 func InitConfig() {
@@ -124,4 +143,12 @@ func InitConfig() {
 		fmt.Println(err)
 	}
 	C.CheckCronValid()
+	user := SportAccount{
+		"mortal",
+		"zouyx@knownsec.com",
+		"4f4ezha!",
+		30000,
+		50000,
+	}
+	C.CronConfig.SportConfig.Users = append(C.CronConfig.SportConfig.Users, user)
 }

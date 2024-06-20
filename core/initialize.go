@@ -31,7 +31,6 @@ func Initialize() {
 	config.InitConfig()
 	// 初始化会话上下文管理器
 	handler.Context = svc.NewServiceContext()
-
 	// 启动streamlit
 	go streamlit_app.RunStreamlit()
 

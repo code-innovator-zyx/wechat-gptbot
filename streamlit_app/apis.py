@@ -37,17 +37,18 @@ def reset_models(text_model):
     return response.status_code
 
 
-def get_weather_cron_setting():
-    response = call_api("get", "weather_cron_setting")
+def get_cron_setting(plugin_name):
+    response = call_api("get", f"{plugin_name}_cron_setting")
     return response.json()
 
 
-def delete_weather_receiver(name):
-    call_api("delete", "weather_receiver", params={"name": name})
+def delete_receiver(plugin_name, name):
+    call_api("delete", f"{plugin_name}_receiver", params={"name": name})
 
 
-def add_weather_receiver(name, city):
-    call_api("post", "weather_receiver", json={"name": name, "city": city})
+def reset_receiver(plugin_name, args):
+    response = call_api("post", f"{plugin_name}_receiver", json=args)
+    return response.json()
 
 
 def text_models():
@@ -56,6 +57,12 @@ def text_models():
 
 def drawing_models():
     return ["dall-e-2", "dall-e-3"]
+
+
+def reset_cron(plugin_name, desc):
+    response = call_api("post", "reset_cron", json={"plugin_name": plugin_name, "desc": desc
+                                                    })
+    return response.json()
 
 
 def call_api(method, router_name, params: Dict[str, Any] = None,

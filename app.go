@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	"wechat-gptbot/core"
-	"wechat-gptbot/core/corn"
+	"wechat-gptbot/core/cron"
 	"wechat-gptbot/core/handler"
 	"wechat-gptbot/server"
 )
@@ -42,7 +42,9 @@ func main() {
 	go handler.KeepAlive(self)
 	logrus.Infof("login success %s,%s,%s", self.User, self.City, self.Province)
 	// 启动定时任务
-	corn.NewCronSvr(self).Start()
+	svr := cron.NewCronSvr(self)
+	svr.Start()
+	handler.Context.CronServer = svr
 	bot.Block()
 }
 

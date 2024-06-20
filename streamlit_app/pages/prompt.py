@@ -1,5 +1,5 @@
 import streamlit as st
-from util import *
+from apis import *
 res = check_login()
 if res["code"] == 511:
     st.switch_page("home.py")

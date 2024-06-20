@@ -3,7 +3,7 @@ import time
 import streamlit as st
 from st_pages import show_pages_from_config, hide_pages
 
-from util import *
+from apis import *
 
 st.set_page_config(page_title='wechat-gptbot', page_icon='🤖', layout='wide',
                    initial_sidebar_state="expanded")

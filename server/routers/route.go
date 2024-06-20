@@ -18,9 +18,24 @@ func InitRoute(bot *openwechat.Bot) *gin.Engine {
 		r.GET("/friends", func(context *gin.Context) {
 			controller.GetFriends(context, bot)
 		})
-		r.GET("/weather-cron-setting", controller.GetWeatherSetting)
-		r.DELETE("/weather-receiver", controller.DeleteWeatherReceiver)
-		r.POST("/weather-receiver", controller.AddWeatherReceiver)
+		r.POST("/cron-reset", controller.ResetCron)
+	}
+	{
+		weather := r.Group("weather")
+		weather.GET("/cron-setting", controller.GetWeatherSetting)
+		weather.DELETE("/receiver", controller.DeleteWeatherReceiver)
+		weather.POST("/receiver", controller.AddWeatherReceiver)
+	}
+	{
+		news := r.Group("news")
+		news.GET("/cron-setting", controller.GetNewsSetting)
+		news.POST("/receiver", controller.ResetNewsReceiver)
+	}
+	{
+		sport := r.Group("sport")
+		sport.GET("/cron-setting", controller.GetSportSetting)
+		sport.DELETE("/receiver", controller.DeleteSportReceiver)
+		sport.POST("/receiver", controller.AddSportReceiver)
 	}
 	return router
 }
