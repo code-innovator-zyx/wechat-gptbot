@@ -4,12 +4,16 @@ CONFIG_FILES := $(patsubst %.template,%,$(TEMPLATE_FILES))
 # 初始化项目配置信息
 .PHONY: init
 init:
-	@echo "生成没有 .template 后缀的文件..."
+	@echo "检查配置文件..."
 	@for file in $(TEMPLATE_FILES); do \
 		new_file=$$(echo $$file | sed 's/\.template$$//'); \
-		cp $$file $$new_file; \
-		rm -f $$file; \
-		echo "生成文件 $$new_file"; \
+		if [ ! -f $$new_file ]; then \
+        			cp $$file $$new_file; \
+        			rm -f $$file; \
+        			echo "生成文件 $$new_file"; \
+        		else \
+        			echo "文件 $$new_file 已存在，跳过生成"; \
+        		fi \
 	done
 
 # 本地运行
@@ -80,8 +84,8 @@ base:
 
 
 # 打包镜像并推送仓库
-.PHONY: bpush
-bpush:
+.PHONY: push
+push:
 	@# 检查并删除已存在的构建器实例
 	@echo "Checking if buildx builder instance 'pushBuilder' already exists..."
 	@if docker buildx inspect pushBuilder > /dev/null 2>&1; then \
@@ -96,4 +100,4 @@ bpush:
 	@# 使用 trap 确保在任务结束后删除构建器
 	@echo "Building and pushing Docker image..."
 	@trap 'echo "Cleaning up: removing buildx builder instance 'pushBuilder'"; docker buildx rm pushBuilder' EXIT INT TERM; \
-		docker buildx build --platform linux/amd64,linux/arm64 -f dockerfile -t 1003941268/python3.11-alpine:latest --push .atform linux/amd64,linux/arm64 -f dockerfile -t 1003941268/python3.11-alpine:latest --push .
+		docker buildx build --platform linux/amd64,linux/arm64 -f dockerfile -t 1003941268/python3.11-alpine:latest --push . || exit 1
