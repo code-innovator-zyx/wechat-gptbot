@@ -15,6 +15,10 @@ init:
         			echo "文件 $$new_file 已存在，跳过生成"; \
         		fi \
 	done
+	@if [ ! -f token.json ]; then \
+		touch token.json; \
+		echo "生成 token.json 文件"; \
+	fi
 
 # 本地运行
 .PHONY: local

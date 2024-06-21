@@ -122,8 +122,10 @@ with weather_forecast:
 
 @st.experimental_dialog("修改热点新闻配置")
 def update_news_receiver():
-    receiver = st.multiselect("选择接收用户", frineds["data"]["users"], default=news_set["users"])
-    groups = st.multiselect("选择接收用户", frineds["data"]["groups"], default=news_set["groups"])
+    users = frineds["data"]["users"]
+    gs = frineds["data"]['groups']
+    receiver = st.multiselect("选择接收用户", users if users else [], default=news_set["users"])
+    groups = st.multiselect("选择接收用户", gs if gs else [], default=news_set["groups"])
     if st.button("确认修改", use_container_width=True, type="primary"):
         if reset_receiver(plugin_name="news", args={"users": receiver, "groups": groups}).get("msg",
                                                                                               "") == "ok":
@@ -133,7 +135,7 @@ def update_news_receiver():
 with hot_search:
     st.info("实时热点消息推送配置")
     news_set = get_cron_setting("news")
-    if news_set["users"]:
+    if news_set["users"] or news_set["groups"]:
         if st.button("实时热点新闻推送：" + news_set["cron"]):
             update_cron_spec(news_plugin_name, news_set["cron"])
         st.multiselect("当前已开启用户", options=news_set["users"], default=news_set["users"], disabled=True)
