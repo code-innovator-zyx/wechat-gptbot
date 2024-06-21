@@ -1,13 +1,15 @@
 import time
 
-import streamlit as st
 from st_pages import show_pages_from_config, hide_pages
+
+show_pages_from_config()
+
+import streamlit as st
 
 from apis import *
 
 st.set_page_config(page_title='wechat-gptbot', page_icon='🤖', layout='wide',
                    initial_sidebar_state="expanded")
-show_pages_from_config()
 st.warning("️当前页面的一切修改都是临时的，服务重启会重置", icon='⚠️')
 
 # 创建三个列 为了 让其居中对齐

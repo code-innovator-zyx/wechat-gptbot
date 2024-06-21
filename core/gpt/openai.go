@@ -68,7 +68,7 @@ func (c *openAiClient) createChat(ctx context.Context, model string, messages []
 	resp, err := c.getClient(model).CreateChatCompletion(ctx, openai.ChatCompletionRequest{
 		Model:           model,
 		Messages:        messages,
-		TopP:            1,
+		TopP:            0.5,
 		Temperature:     0.5,
 		PresencePenalty: 0,
 	})

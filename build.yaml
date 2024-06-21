@@ -1,7 +1,7 @@
 version: '2.25'
 services:
   wechat-gptbot:
-    image: wechat-gptbot:latest
+    image: 1003941268/wechat-gptbot:latest
     ports:
       - "8501:8501"
     container_name: wechat-gptbot
@@ -9,9 +9,9 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-#    volumes:   可选挂载
-#      - ./token.json:/code/token.json
-#      - /home/zouyx/workspace/wechat-gptbot/config:/code/config
+    #    volumes:   可选挂载 挂载 token.json 重启不用重新登陆
+    #      - ./token.json:/code/token.json
+    #      - /home/zouyx/workspace/wechat-gptbot/config:/code/config
     network_mode: bridge
     environment:
       - TZ=Asia/Shanghai

@@ -25,10 +25,9 @@ type Config struct {
 		TextConfig  AuthConfig `json:"text_config"`
 		ImageConfig AuthConfig `json:"image_config"`
 	} `json:"gpt"`
-	ContextStatus  bool   `json:"context_status"`
-	BaseModel      string `json:"base_model"`
-	KeepaliveRobot string `json:"keepalive_robot"`
-	CronConfig     struct {
+	ContextStatus bool   `json:"context_status"`
+	BaseModel     string `json:"base_model"`
+	CronConfig    struct {
 		WeatherConfig WeatherCronConfig     `json:"weather_config"`
 		NewsConfig    NewsCronConfig        `json:"news_config"`
 		SportConfig   WechatSportCronConfig `json:"sport_config"`

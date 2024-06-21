@@ -1,0 +1,16 @@
+FROM alpine:3.19.1 as Builder
+RUN apk update && apk add \
+    curl \
+    python3 \
+    py3-pip \
+    py3-pyarrow \
+    && rm -rf /var/lib/apt/lists/*
+
+
+COPY streamlit_app/requirements.txt .
+RUN pip install --break-system-packages -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple
+
+
+WORKDIR /app
+
+

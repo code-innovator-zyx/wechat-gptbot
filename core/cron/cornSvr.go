@@ -66,11 +66,11 @@ func (c *CronSvr) ResetPluginCron(pluginName, spec string) {
 		// 新增一个定时任务
 		newId, err := c.AddJob(spec, job)
 		if nil != err {
-			panic(err)
+			logrus.Errorf("添加定时任务失败 %s", err.Error())
+			return
 		}
 		c.crons[pluginName] = newId
 		// 移除原来的
 		c.Remove(id)
 	}
-
 }

@@ -21,7 +21,9 @@ COPY --from=builder /code/wechat-gptbot /code/wechat-gptbot
 COPY --from=builder /code/streamlit_app/ /code/streamlit_app/
 COPY --from=builder /code/.streamlit/ /code/.streamlit/
 COPY --from=builder /code/config/config.json.template /code/config/config.json
+COPY --from=builder /code/config/cron.json /code/config/cron.json
 COPY --from=builder /code/config/prompt.conf.template /code/config/prompt.conf
+
 
 RUN chown -R root:root /code
 CMD [ "/code/wechat-gptbot" ]

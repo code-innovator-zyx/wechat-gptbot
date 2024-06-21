@@ -41,6 +41,7 @@ func (w *Weather) Run() {
 		// 没有需要通知的用户
 		return
 	}
+	logrus.Infof("执行天气定时任务 %+v", w.cfg.Users)
 
 	friends, err := w.bot.Friends()
 	if nil != err {

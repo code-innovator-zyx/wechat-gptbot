@@ -13,7 +13,7 @@ import (
 /*
 * @Author: zouyx
 * @Date:   2023/11/11 18:05
-* @Package: 支持会话上下文管理 暂时只保留最近3次对话信息
+* @Package: 会话管理
  */
 const MaxSession = 6
 
@@ -171,7 +171,8 @@ func (s *session) CreateImage(ctx context.Context, prompt string) string {
 func (s *session) GenerateQuartzCron(describe string) string {
 	msgs := []openai.ChatCompletionMessage{
 		{Role: openai.ChatMessageRoleSystem,
-			Content: "你是一个Quartz Cron表达式专家,我会向你进行描述，请根据我的描述生成表达式，并且只返回表达式字符串，例如 0 30 7 1/1 * ?"},
+			Content: "你是一个Quartz Cron表达式专家,我会向你进行描述，请根据我的描述生成6字段的cron表达式，只返回表达式字符串"},
+		{Role: openai.ChatMessageRoleUser, Content: "每天早上八点半执行"}, {Role: openai.ChatMessageRoleAssistant, Content: "0 30 8 1/1 * ?"},
 		{
 			Role:    openai.ChatMessageRoleUser,
 			Content: describe,
@@ -188,7 +189,8 @@ func (s *session) GenerateQuartzCron(describe string) string {
 func (s *session) DescribeQuartzCron(cron string) string {
 	msgs := []openai.ChatCompletionMessage{
 		{Role: openai.ChatMessageRoleSystem,
-			Content: "你是一个Quartz Cron表达式专家,我会给你一个cron表达式，用自然语言描述,只需要返回执行时间，不要过多解释,例如：提问：0 0 8 1/1 * ? 回答：每天早上8点"},
+			Content: "你是一个Quartz Cron表达式专家,我会给你一个cron表达式，用自然语言描述,只需要返回执行时间"},
+		{Role: openai.ChatMessageRoleUser, Content: "0 30 8 1/1 * ?"}, {Role: openai.ChatMessageRoleAssistant, Content: "每天早上八点半执行"},
 		{Role: openai.ChatMessageRoleUser, Content: cron},
 	}
 	chat, err := s.client.createChat(context.Background(), openai.GPT3Dot5Turbo, msgs)
