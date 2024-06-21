@@ -66,7 +66,7 @@ local:init
 
 # 本地docker运行
 .PHONY: brun
-brun:init
+docker:init
 	@docker-compose -f build.yaml up --build -d
 
 # 构建依赖的基础镜像并推送到远程仓库
