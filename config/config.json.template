@@ -1,20 +1,16 @@
 {
   "gpt": {
     "text_config": {
-      "proxy_url": "",   # 代理地址，如果不配置，使用默认openai官方地址 https://api.openai.com/v1
+      "proxy_url": "",
       "auth_token": "openai token",
       "trigger_prefix": "嘎子"
     },
     "image_config": {
-      "proxy_url": "", # 代理地址，如果不配置，使用默认openai官方地址 https://api.openai.com/v1
+      "proxy_url": "",
       "auth_token": "openai token",
       "trigger_prefix": "二狗子"
     }
   },
     "context_status": true,
-    "#base_model": "常规聊天模型，支持配置以下两种   gpt-3.5-turbo    gpt-4-turbo-preview gpt-4o",
-    "base_model": "gpt-3.5-turbo",
-    "#keepalive_robot": "用于状态保活的，需要一个有自动回复的公众号，并且关注定期进行私信(算是一种解决方案的代替手法，目前客户端模拟登陆总是在夜晚没消息的时候自动退出),可以关注'跳跳是只cat'",
-    "keepalive_robot": "跳跳是只cat"
-
+    "base_model": "gpt-3.5-turbo"
 }
