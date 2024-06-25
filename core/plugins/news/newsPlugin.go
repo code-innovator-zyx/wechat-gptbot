@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mmcdole/gofeed"
+	"github.com/sirupsen/logrus"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"wechat-gptbot/core/plugins"
@@ -62,8 +62,8 @@ func (p plugin) Do(...interface{}) []string {
 	}
 	news, err := fun(p.url, p.topN)
 	if err != nil {
-		log.Fatalf("error fetching news: %v", err)
-		return []string{"热点新闻获取失败"}
+		logrus.Errorf("error fetching news: %v", err)
+		return []string{"暂时无法帮你查看，请检查配置"}
 	}
 	return news
 }
