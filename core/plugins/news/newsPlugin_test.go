@@ -12,6 +12,6 @@ import (
  */
 
 func TestWeatherPlugin_Do(t *testing.T) {
-	p := NewPlugin()
-	t.Log(p.Do("成都"))
+	p := NewPlugin(SetRssSource(""), SetTopN(10))
+	t.Log(p.Do())
 }

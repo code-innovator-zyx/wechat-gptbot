@@ -2,10 +2,13 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mmcdole/gofeed"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strings"
 	"wechat-gptbot/config"
 	"wechat-gptbot/core/handler"
+	"wechat-gptbot/core/plugins"
 	news2 "wechat-gptbot/core/plugins/news"
 	weather2 "wechat-gptbot/core/plugins/weather"
 	"wechat-gptbot/core/plugins/wechatMovement"
@@ -85,9 +88,11 @@ func GetNewsSetting(ctx *gin.Context) {
 		config.C.CronConfig.NewsConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.CronConfig.NewsConfig.Spec)
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"users":  config.C.CronConfig.NewsConfig.Users,
-		"groups": config.C.CronConfig.NewsConfig.Groups,
-		"cron":   config.C.CronConfig.NewsConfig.Desc,
+		"users":      config.C.CronConfig.NewsConfig.Users,
+		"groups":     config.C.CronConfig.NewsConfig.Groups,
+		"cron":       config.C.CronConfig.NewsConfig.Desc,
+		"rss_source": config.C.CronConfig.NewsConfig.RssSource,
+		"top_n":      config.C.CronConfig.NewsConfig.TopN,
 	})
 }
 
@@ -200,4 +205,43 @@ func ResetCron(c *gin.Context) {
 	// 重置 定时器
 	handler.Context.CronServer.ResetPluginCron(req.PluginName, *spec)
 	c.JSON(http.StatusBadRequest, gin.H{"msg": "ok"})
+}
+
+type ResetRssRequest struct {
+	Source string `json:"source"`
+	TopN   int    `json:"top_n"` // 时间描述
+}
+
+func ResetRss(c *gin.Context) {
+	var request ResetRssRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		// 如果查询参数中没有提供name，则返回Bad Request
+		c.JSON(http.StatusBadRequest, gin.H{"msg": "Missing 'source' query parameter"})
+		return
+	}
+	request.Source = strings.TrimSpace(request.Source)
+	// 关闭 rss 无需校验
+	if request.Source != "" {
+		fp := gofeed.NewParser()
+		_, err = fp.ParseURL(request.Source)
+		if err != nil {
+			c.JSON(http.StatusBadGateway, gin.H{"msg": "无效的RSS源"})
+			return
+		}
+	}
+
+	config.C.CronConfig.NewsConfig.RssSource = request.Source
+
+	config.C.CronConfig.NewsConfig.TopN = request.TopN
+
+	// 重置插件
+	err = plugins.Manger.ResetPlugin(news2.NewsPluginName, func(_ plugins.PluginSvr) plugins.PluginSvr {
+		return news2.NewPlugin(news2.SetTopN(request.TopN), news2.SetRssSource(request.Source))
+	})
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"msg": "设置失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"msg": "ok"})
 }

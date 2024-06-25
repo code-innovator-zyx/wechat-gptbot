@@ -9,7 +9,7 @@ st.set_page_config(page_title='定时任务管理', page_icon='🔩', layout='wi
                    initial_sidebar_state="expanded")
 
 st.title('🚗 机器人儿定时任务管理')
-step, weather_forecast, hot_search = st.tabs(["微信运动", "天气预报", "每日热搜"])
+step, weather_forecast, hot_search = st.tabs(["微信运动", "天气预报", "媒体新闻推送"])
 frineds = get_friends()
 
 weather_plugin_name = "WeatherPlugin"
@@ -99,7 +99,7 @@ def update_weather_receiver(current_users):
 
 
 with weather_forecast:
-    st.info("准点天气推送，每天早上八点推送天气给指定用户")
+    st.info("天气推送")
     weather_set = get_cron_setting("weather")
     if weather_set["users"]:
         if st.button("天气推送：" + weather_set["cron"]):
@@ -132,12 +132,40 @@ def update_news_receiver():
             st.rerun()
 
 
+@st.experimental_dialog("RSS订阅源设置")
+def rss(source, top_n):
+    if source != "":
+        # 关闭操作
+        res = reset_rss("", top_n)
+        st.rerun()
+    new_source = st.text_input("RSS源地址", value=source)
+    new_top_n = st.number_input("最多接受的消息量", min_value=5, max_value=50, step=1, value=top_n)
+    if st.button("订阅", disabled=(new_source == source), type="primary",
+                 use_container_width=True):
+        res = reset_rss(new_source if new_source != source else source,
+                        new_top_n if new_top_n != top_n else top_n)
+        if res["msg"] == "ok":
+            st.info("修改成功")
+            st.rerun()
+        else:
+            st.warning(res["msg"])
+
+
+def change_status_session():
+    st.session_state["rss_toggle"] = True
+
+
 with hot_search:
-    st.info("实时热点消息推送配置")
+    st.header("实时订阅消息推送")
     news_set = get_cron_setting("news")
     if news_set["users"] or news_set["groups"]:
         if st.button("实时热点新闻推送：" + news_set["cron"]):
             update_cron_spec(news_plugin_name, news_set["cron"])
+
+        st.toggle("使用RSS订阅", value=(news_set["rss_source"] != ""), on_change=change_status_session)
+        if st.session_state.get("rss_toggle", False):
+            del st.session_state["rss_toggle"]
+            rss(news_set["rss_source"], news_set["top_n"])
         st.multiselect("当前已开启用户", options=news_set["users"], default=news_set["users"], disabled=True)
         st.multiselect("当前已开启群组", options=news_set["groups"], default=news_set["groups"], disabled=True)
     if st.button("修改配置", type="primary", use_container_width=True):

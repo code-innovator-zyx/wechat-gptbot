@@ -57,10 +57,12 @@ type WeatherCronConfig struct {
 }
 
 type NewsCronConfig struct {
-	Users  []string // 用户名
-	Groups []string // 群名称
-	Spec   string   `json:"spec"` // cron 表达式
-	Desc   string
+	Users     []string // 用户名
+	Groups    []string // 群名称
+	Spec      string   `json:"spec"`       // cron 表达式
+	RssSource string   `json:"rss_source"` // rss 推送源
+	TopN      int      `json:"top_n"`      // 限制接收量
+	Desc      string
 }
 
 func (c *Config) GetBaseModel() string {

@@ -65,6 +65,11 @@ def reset_cron(plugin_name, desc):
     return response.json()
 
 
+def reset_rss(source, top_n):
+    response = call_api("post", "reset_rss", json={"source": source, "top_n": top_n})
+    return response.json()
+
+
 def call_api(method, router_name, params: Dict[str, Any] = None,
              json: Dict[str, Any] = None, ):
     router = get_routers(router_name)

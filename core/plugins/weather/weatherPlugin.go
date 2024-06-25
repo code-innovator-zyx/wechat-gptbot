@@ -65,7 +65,6 @@ func (s *Plugin) addData(city, data string) {
 	})
 }
 func (s *Plugin) Do(args ...interface{}) []string {
-	fmt.Printf("查询 %s 天气 \n", args[0])
 	if len(args) <= 0 {
 		return []string{"请输入查询的地址"}
 	}

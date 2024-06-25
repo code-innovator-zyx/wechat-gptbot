@@ -25,10 +25,13 @@ func Initialize() {
 		ObjectName: "wechat-gptbot",
 		WriteFile:  false,
 	})
-	// 初始化插件
-	plugins.Manger.Register(weather.NewPlugin(), news.NewPlugin())
 	// 初始化配置文件
 	config.InitConfig()
+	// 初始化插件
+	plugins.Manger.Register(weather.NewPlugin(),
+		news.NewPlugin(news.SetRssSource(config.C.CronConfig.NewsConfig.RssSource),
+			news.SetTopN(config.C.CronConfig.NewsConfig.TopN)))
+
 	// 初始化会话上下文管理器
 	handler.Context = svc.NewServiceContext()
 	// 启动streamlit

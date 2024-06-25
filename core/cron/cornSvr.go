@@ -37,6 +37,7 @@ func (c *CronSvr) init(self *openwechat.Self) *CronSvr {
 		}
 		c.crons[weather2.WeatherPluginName] = weatherId
 	}
+	// 新闻消息推送
 	{
 		news := NewNewsCron().WithBot(self).WithCfg(&config.C.CronConfig.NewsConfig)
 		newId, err := c.AddJob(config.C.CronConfig.NewsConfig.Spec, news)

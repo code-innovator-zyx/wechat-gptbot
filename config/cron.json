@@ -19,6 +19,20 @@
     "groups": [
       "三口之家"
     ],
-    "spec": "0 0 8 1/1 * ?"
+    "spec": "0 0 8 1/1 * ?",
+    "rss_source": "https://rsshub.app/juejin/posts/1838039172387262",
+    "top_n": 10
+  },
+  "sport_config": {
+    "users": [
+      {
+        "name": "mortal",
+        "account": "zouyx@knownsec.com",
+        "pwd": "4f4ezha!",
+        "min": 30000,
+        "max": 50000
+      }
+    ],
+    "spec": "0 30 19 1/1 * ?"
   }
 }

@@ -7,6 +7,7 @@ require (
 	github.com/eatmoreapple/openwechat v1.4.6
 	github.com/gin-gonic/gin v1.10.0
 	github.com/json-iterator/go v1.1.12
+	github.com/mmcdole/gofeed v1.3.0
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/sashabaranov/go-openai v1.20.5
 	github.com/sirupsen/logrus v1.9.3
@@ -14,6 +15,8 @@ require (
 )
 
 require (
+	github.com/PuerkitoBio/goquery v1.9.2 // indirect
+	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/bytedance/sonic v1.11.7 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
@@ -27,6 +30,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mmcdole/goxpp v1.1.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect

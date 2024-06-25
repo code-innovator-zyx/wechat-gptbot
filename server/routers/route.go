@@ -19,6 +19,7 @@ func InitRoute(bot *openwechat.Bot) *gin.Engine {
 			controller.GetFriends(context, bot)
 		})
 		r.POST("/cron-reset", controller.ResetCron)
+		r.POST("/rss-reset", controller.ResetRss)
 	}
 	{
 		weather := r.Group("weather")
