@@ -29,8 +29,8 @@ func Initialize() {
 	config.InitConfig()
 	// 初始化插件
 	plugins.Manger.Register(weather.NewPlugin(),
-		news.NewPlugin(news.SetRssSource(config.C.CronConfig.NewsConfig.RssSource),
-			news.SetTopN(config.C.CronConfig.NewsConfig.TopN)))
+		news.NewPlugin(news.SetRssSource(config.C.Cron.NewsConfig.RssSource),
+			news.SetTopN(config.C.Cron.NewsConfig.TopN)))
 
 	// 初始化会话上下文管理器
 	handler.Context = svc.NewServiceContext()

@@ -8,20 +8,27 @@
       {
         "name": "妈妈",
         "city": "泸州"
+      },
+      {
+        "name": "撕鹅 佘",
+        "city": "成都"
       }
     ],
-    "spec": "0 0 8 1/1 * ?"
+    "spec": "0 0 8 1/1 * ?",
+    "Desc": "每天早上八点执行"
   },
   "news_config": {
-    "users": [
-      "mortal"
+    "Users": [
+      "mortal",
+      "詹詹"
     ],
-    "groups": [
+    "Groups": [
       "三口之家"
     ],
     "spec": "0 0 8 1/1 * ?",
-    "rss_source": "https://rsshub.app/juejin/posts/1838039172387262",
-    "top_n": 10
+    "rss_source": "https://www.solidot.org/index.rss",
+    "top_n": 10,
+    "Desc": "每天早上八点执行"
   },
   "sport_config": {
     "users": [
@@ -33,6 +40,7 @@
         "max": 50000
       }
     ],
-    "spec": "0 30 19 1/1 * ?"
+    "spec": "0 30 19 1/1 * ?",
+    "Desc": "每天晚上七点半执行"
   }
 }

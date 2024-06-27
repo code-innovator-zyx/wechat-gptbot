@@ -30,8 +30,8 @@ func NewCronSvr(self *openwechat.Self) *CronSvr {
 func (c *CronSvr) init(self *openwechat.Self) *CronSvr {
 	// 添加天气预报定时器
 	{
-		weather := NewWeatherCron().WithBot(self).WithCfg(&config.C.CronConfig.WeatherConfig)
-		weatherId, err := c.AddJob(config.C.CronConfig.WeatherConfig.Spec, weather)
+		weather := NewWeatherCron().WithBot(self).WithCfg(&config.C.Cron.WeatherConfig)
+		weatherId, err := c.AddJob(config.C.Cron.WeatherConfig.Spec, weather)
 		if err != nil {
 			panic(err)
 		}
@@ -39,8 +39,8 @@ func (c *CronSvr) init(self *openwechat.Self) *CronSvr {
 	}
 	// 新闻消息推送
 	{
-		news := NewNewsCron().WithBot(self).WithCfg(&config.C.CronConfig.NewsConfig)
-		newId, err := c.AddJob(config.C.CronConfig.NewsConfig.Spec, news)
+		news := NewNewsCron().WithBot(self).WithCfg(&config.C.Cron.NewsConfig)
+		newId, err := c.AddJob(config.C.Cron.NewsConfig.Spec, news)
 		if err != nil {
 			panic(err)
 		}
@@ -49,8 +49,8 @@ func (c *CronSvr) init(self *openwechat.Self) *CronSvr {
 
 	{
 		// 添加天气预报定时器
-		sport := NewSportCron().WithBot(self).WithCfg(&config.C.CronConfig.SportConfig)
-		sportId, err := c.AddJob(config.C.CronConfig.SportConfig.Spec, sport)
+		sport := NewSportCron().WithBot(self).WithCfg(&config.C.Cron.SportConfig)
+		sportId, err := c.AddJob(config.C.Cron.SportConfig.Spec, sport)
 		if err != nil {
 			panic(err)
 		}

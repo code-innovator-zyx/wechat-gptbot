@@ -35,7 +35,7 @@ type session struct {
 
 func NewSession() Session {
 	clients := &openAiClient{}
-	gptConfigValues := reflect.ValueOf(config.C.Gpt)
+	gptConfigValues := reflect.ValueOf(config.C.Base.Gpt)
 	numField := gptConfigValues.NumField()
 	clients.cs = make(map[string]*openai.Client, numField)
 	registry := plugins.NewPluginRegistry()
@@ -134,7 +134,7 @@ func (s *session) Chat(ctx context.Context, content string) []string {
 	sender := ctx.Value("sender").(string)
 	// 获取用户上下文
 	um := s.getUserContext(sender)
-	if config.C.ContextStatus {
+	if config.C.Base.ContextStatus {
 		// 只有在用户开启上下文的时候，追加上下文需要加锁,得到回复追加上下文后才进行锁的释放
 		um.Lock()
 		defer um.Unlock()
@@ -147,7 +147,7 @@ func (s *session) Chat(ctx context.Context, content string) []string {
 		return []string{err.Error()}
 	}
 	// 发送成功，可以讲请求和回复加入上下文
-	if config.C.ContextStatus {
+	if config.C.Base.ContextStatus {
 		// 如果请求成功才把问题回复都添加进上下文
 		if resetMsg, ok := plugins.Manger.DoPlugin(reply); ok {
 			reply = resetMsg

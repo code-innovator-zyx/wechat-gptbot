@@ -37,7 +37,9 @@ func ResetModel(c *gin.Context) {
 	info := ModelInfo{}
 	c.ShouldBindBodyWithJSON(&info)
 	if info.TextModel != "" {
-		config.C.SetBaseModel(info.TextModel)
+		config.C.ResetBase(func(cfg *config.BaseConfig) {
+			cfg.BaseModel = info.TextModel
+		})
 	}
 	c.JSON(http.StatusOK, gin.H{"code": 200,
 		"msg": "ok"})

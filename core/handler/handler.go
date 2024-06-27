@@ -77,7 +77,7 @@ func (dispatcher *MessageMatchDispatcher) text(message *openwechat.MessageContex
 }
 
 func (dispatcher *MessageMatchDispatcher) image(message *openwechat.MessageContext) {
-	message.Content = strings.TrimLeft(message.Content, config.C.Gpt.ImageConfig.TriggerPrefix)
+	message.Content = strings.TrimLeft(message.Content, config.C.Base.Gpt.ImageConfig.TriggerPrefix)
 	sender, err := message.Sender()
 	if nil != err {
 		logrus.Error(err.Error())
@@ -143,13 +143,13 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 		return true, checkCreateImage(msg)
 	}
 
-	if strings.HasPrefix(msg.Content, config.C.Gpt.TextConfig.TriggerPrefix) {
-		msg.Content = strings.TrimLeft(msg.Content, config.C.Gpt.TextConfig.TriggerPrefix)
+	if strings.HasPrefix(msg.Content, config.C.Base.Gpt.TextConfig.TriggerPrefix) {
+		msg.Content = strings.TrimLeft(msg.Content, config.C.Base.Gpt.TextConfig.TriggerPrefix)
 		return true, false
 	}
 
-	if strings.HasPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix) {
-		msg.Content = strings.TrimLeft(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix)
+	if strings.HasPrefix(msg.Content, config.C.Base.Gpt.ImageConfig.TriggerPrefix) {
+		msg.Content = strings.TrimLeft(msg.Content, config.C.Base.Gpt.ImageConfig.TriggerPrefix)
 		return true, true
 	}
 
@@ -159,7 +159,7 @@ func checkMessageType(msg *openwechat.Message) (needReply bool, isImage bool) {
 // 通过语义判断是否是文生图的需求
 func checkCreateImage(msg *openwechat.Message) bool {
 	msg.Content = strings.TrimPrefix(msg.Content, "\u2005")
-	if strings.HasPrefix(msg.Content, config.C.Gpt.ImageConfig.TriggerPrefix) {
+	if strings.HasPrefix(msg.Content, config.C.Base.Gpt.ImageConfig.TriggerPrefix) {
 		return true
 	}
 	return false

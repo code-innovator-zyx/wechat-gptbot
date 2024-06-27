@@ -23,12 +23,14 @@ import (
 
 // GetWeatherSetting 天气预报定时任务相关配置
 func GetWeatherSetting(ctx *gin.Context) {
-	if config.C.CronConfig.WeatherConfig.Desc == "" {
-		config.C.CronConfig.WeatherConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.CronConfig.WeatherConfig.Spec)
+	if config.C.Cron.WeatherConfig.Desc == "" && config.C.Cron.WeatherConfig.Spec != "" {
+		config.C.ResetCron(func(cfg *config.CronConfig) {
+			cfg.WeatherConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.Cron.WeatherConfig.Spec)
+		})
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"cron":  config.C.CronConfig.WeatherConfig.Desc,
-		"users": config.C.CronConfig.WeatherConfig.Users,
+		"cron":  config.C.Cron.WeatherConfig.Desc,
+		"users": config.C.Cron.WeatherConfig.Users,
 	})
 }
 
@@ -40,18 +42,16 @@ func DeleteWeatherReceiver(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "Missing 'name' query parameter"})
 		return
 	}
-	config.C.Lock()
-	defer config.C.Unlock()
-	users := &config.C.CronConfig.WeatherConfig.Users
-	for i, user := range *users {
-		if user.Name == name {
-			// 删除用户
-			(*users)[i] = (*users)[len(*users)-1]
-			*users = (*users)[:len(*users)-1]
-			ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
-			return
+	config.C.ResetCron(func(cfg *config.CronConfig) {
+		for i, user := range cfg.WeatherConfig.Users {
+			if user.Name == name {
+				// 删除用户
+				(cfg.WeatherConfig.Users)[i] = (cfg.WeatherConfig.Users)[len(cfg.WeatherConfig.Users)-1]
+				cfg.WeatherConfig.Users = (cfg.WeatherConfig.Users)[:len(cfg.WeatherConfig.Users)-1]
+				return
+			}
 		}
-	}
+	})
 	// 如果没有找到用户，返回Not Found
 	ctx.JSON(http.StatusNotFound, gin.H{"msg": "User not found"})
 }
@@ -68,31 +68,28 @@ func AddWeatherReceiver(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid JSON input"})
 		return
 	}
-
-	config.C.Lock()
-	defer config.C.Unlock()
-	users := &config.C.CronConfig.WeatherConfig.Users
-
-	// 添加新用户
-	*users = append(*users, struct {
-		Name string `json:"name"`
-		City string `json:"city"`
-	}{Name: user.Name, City: user.City})
-
+	config.C.ResetCron(func(cfg *config.CronConfig) {
+		cfg.WeatherConfig.Users = append(cfg.WeatherConfig.Users, struct {
+			Name string `json:"name"`
+			City string `json:"city"`
+		}{Name: user.Name, City: user.City})
+	})
 	ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 }
 
 // GetNewsSetting 热点新闻定时任务相关配置
 func GetNewsSetting(ctx *gin.Context) {
-	if config.C.CronConfig.NewsConfig.Desc == "" {
-		config.C.CronConfig.NewsConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.CronConfig.NewsConfig.Spec)
+	if config.C.Cron.NewsConfig.Desc == "" && config.C.Cron.NewsConfig.Spec != "" {
+		config.C.ResetCron(func(cfg *config.CronConfig) {
+			cfg.NewsConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.Cron.NewsConfig.Spec)
+		})
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"users":      config.C.CronConfig.NewsConfig.Users,
-		"groups":     config.C.CronConfig.NewsConfig.Groups,
-		"cron":       config.C.CronConfig.NewsConfig.Desc,
-		"rss_source": config.C.CronConfig.NewsConfig.RssSource,
-		"top_n":      config.C.CronConfig.NewsConfig.TopN,
+		"users":      config.C.Cron.NewsConfig.Users,
+		"groups":     config.C.Cron.NewsConfig.Groups,
+		"cron":       config.C.Cron.NewsConfig.Desc,
+		"rss_source": config.C.Cron.NewsConfig.RssSource,
+		"top_n":      config.C.Cron.NewsConfig.TopN,
 	})
 }
 
@@ -108,23 +105,24 @@ func ResetNewsReceiver(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid JSON input"})
 		return
 	}
-	config.C.Lock()
-	defer config.C.Unlock()
-	newsConf := &config.C.CronConfig.NewsConfig
-	newsConf.Users = user.Users
-	newsConf.Groups = user.Groups
+	config.C.ResetCron(func(cfg *config.CronConfig) {
+		cfg.NewsConfig.Users = user.Users
+		cfg.NewsConfig.Groups = user.Groups
+	})
 
 	ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 }
 
 // GetSportSetting 获取微信运动配置
 func GetSportSetting(ctx *gin.Context) {
-	if config.C.CronConfig.SportConfig.Desc == "" && config.C.CronConfig.SportConfig.Spec != "" {
-		config.C.CronConfig.SportConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.CronConfig.SportConfig.Spec)
+	if config.C.Cron.SportConfig.Desc == "" && config.C.Cron.SportConfig.Spec != "" {
+		config.C.ResetCron(func(cfg *config.CronConfig) {
+			cfg.SportConfig.Desc = handler.Context.Session.DescribeQuartzCron(config.C.Cron.SportConfig.Spec)
+		})
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"users": config.C.CronConfig.SportConfig.Users,
-		"cron":  config.C.CronConfig.SportConfig.Desc})
+		"users": config.C.Cron.SportConfig.Users,
+		"cron":  config.C.Cron.SportConfig.Desc})
 }
 
 func AddSportReceiver(ctx *gin.Context) {
@@ -134,12 +132,9 @@ func AddSportReceiver(ctx *gin.Context) {
 		return
 	}
 
-	config.C.Lock()
-	defer config.C.Unlock()
-	users := &config.C.CronConfig.SportConfig.Users
-
-	// 添加新用户
-	*users = append(*users, user)
+	config.C.ResetCron(func(cfg *config.CronConfig) {
+		cfg.SportConfig.Users = append(cfg.SportConfig.Users, user)
+	})
 
 	ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 }
@@ -152,20 +147,18 @@ func DeleteSportReceiver(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "Missing 'name' query parameter"})
 		return
 	}
-	config.C.Lock()
-	defer config.C.Unlock()
-	users := &config.C.CronConfig.SportConfig.Users
-	for i, user := range *users {
-		if user.Name == name {
-			// 删除用户
-			(*users)[i] = (*users)[len(*users)-1]
-			*users = (*users)[:len(*users)-1]
-			ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
-			return
+	config.C.ResetCron(func(cfg *config.CronConfig) {
+		for i, user := range cfg.SportConfig.Users {
+			if user.Name == name {
+				// 删除用户
+				(cfg.SportConfig.Users)[i] = (cfg.SportConfig.Users)[len(cfg.SportConfig.Users)-1]
+				cfg.SportConfig.Users = (cfg.SportConfig.Users)[:len(cfg.SportConfig.Users)-1]
+				return
+			}
 		}
-	}
+	})
 	// 如果没有找到用户，返回Not Found
-	ctx.JSON(http.StatusNotFound, gin.H{"msg": "User not found"})
+	ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 }
 
 type ResetCronRequest struct {
@@ -182,22 +175,31 @@ func ResetCron(c *gin.Context) {
 	}
 	var spec *string
 	// 修改配置
+	var fun func(cfg *config.CronConfig)
 	switch req.PluginName {
 	case weather2.WeatherPluginName:
-		config.C.CronConfig.WeatherConfig.Desc = req.Desc
-		spec = &config.C.CronConfig.WeatherConfig.Spec
+		fun = func(cfg *config.CronConfig) {
+			cfg.WeatherConfig.Desc = req.Desc
+		}
+		spec = &config.C.Cron.WeatherConfig.Spec
 	case news2.NewsPluginName:
-		config.C.CronConfig.NewsConfig.Desc = req.Desc
-		spec = &config.C.CronConfig.NewsConfig.Spec
+		fun = func(cfg *config.CronConfig) {
+			cfg.NewsConfig.Desc = req.Desc
 
+		}
+		spec = &config.C.Cron.NewsConfig.Spec
 	case wechatMovement.StepPluginName:
-		config.C.CronConfig.SportConfig.Desc = req.Desc
-		spec = &config.C.CronConfig.SportConfig.Spec
+		fun = func(cfg *config.CronConfig) {
+			cfg.SportConfig.Desc = req.Desc
+		}
+		spec = &config.C.Cron.SportConfig.Spec
 
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "unknown pluginName"})
 		return
 	}
+	// 修改配置
+	config.C.ResetCron(fun)
 	// 根据描述生成 表达式
 	cron := handler.Context.Session.GenerateQuartzCron(req.Desc)
 	logrus.Infof("%s   生成的 cron 表达式 %s", req.Desc, cron)
@@ -230,10 +232,10 @@ func ResetRss(c *gin.Context) {
 			return
 		}
 	}
-
-	config.C.CronConfig.NewsConfig.RssSource = request.Source
-
-	config.C.CronConfig.NewsConfig.TopN = request.TopN
+	config.C.ResetCron(func(cfg *config.CronConfig) {
+		cfg.NewsConfig.RssSource = request.Source
+		cfg.NewsConfig.TopN = request.TopN
+	})
 
 	// 重置插件
 	err = plugins.Manger.ResetPlugin(news2.NewsPluginName, func(_ plugins.PluginSvr) plugins.PluginSvr {
