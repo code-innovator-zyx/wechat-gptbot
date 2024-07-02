@@ -1,10 +1,9 @@
 import pandas as pd
 import streamlit as st
+from auth import *
 from apis import *
 
-res = check_login()
-if res["code"] == 511:
-    st.switch_page("home.py")
+check_login()
 st.set_page_config(page_title='定时任务管理', page_icon='🔩', layout='wide',
                    initial_sidebar_state="expanded")
 

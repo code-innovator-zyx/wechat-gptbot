@@ -45,6 +45,21 @@ func HasPrefixes(s string, profiles []string) bool {
 	return false
 }
 
+// ElementInStr 判断两个字符串是否有相同字符 通过字符掩码按位运算
+func ElementInStr(s1, s2 string) bool {
+	var (
+		r1 int
+		r2 int
+	)
+	for i := range s1 {
+		r1 |= 1 << s1[i]
+	}
+	for i := range s2 {
+		r2 |= 1 << s2[i]
+	}
+	return r1&r2 != 0
+}
+
 var client = http.Client{}
 
 func DownloadImage(url string, reader *bytes.Buffer) error {

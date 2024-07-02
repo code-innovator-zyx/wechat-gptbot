@@ -21,7 +21,7 @@ func RunStreamlit() {
 		return
 	}
 	// 创建一个 exec.Command 实例
-	cmd := exec.Command("streamlit", "run", "./streamlit_app/home.py")
+	cmd := exec.Command("streamlit", "run", "./streamlit_app/主页.py")
 	// 获取命令的标准输出和标准错误输出管道
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {

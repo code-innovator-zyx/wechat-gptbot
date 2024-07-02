@@ -104,4 +104,4 @@ push:
 	@# 使用 trap 确保在任务结束后删除构建器
 	@echo "Building and pushing Docker image..."
 	@trap 'echo "Cleaning up: removing buildx builder instance 'pushBuilder'"; docker buildx rm pushBuilder' EXIT INT TERM; \
-		docker buildx build --platform linux/amd64,linux/arm64 -f dockerfile -t 1003941268/python3.11-alpine:latest --push . || exit 1
+		docker buildx build --platform linux/amd64,linux/arm64 -f dockerfile -t 1003941268/wechat-gptbot:latest --push . || exit 1
