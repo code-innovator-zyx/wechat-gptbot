@@ -1,6 +1,31 @@
-以下是优化后的文档，旨在使其更易于理解、使用和维护。
+<p align="center">
+  <a href="https://github.com/Geniusay/ChopperBot">
+   <img alt="ChopperBot" src="https://github.com/twj666/ChopperBot-Doc/blob/master/img/logo.png?raw=true">
+  </a>
+</p>
 
----
+<p align="center">
+  <strong>微信机器人助手</strong>
+</p>
+
+
+<p align="center">
+  <a href="https://github.com/code-innovator-zyx/wechat-gptbot/blob/main/README.md">
+    <img src="https://img.shields.io/badge/文档-简体中文-blue.svg" alt="简体中文文档" />
+  </a>
+
+  <a target="_blank" href='https://github.com/code-innovator-zyx/wechat-gptbot'>
+        <img src="https://img.shields.io/github/stars/code-innovator-zyx/wechat-gptbot.svg" alt="github stars"/>
+   </a>
+
+   <a target="_blank" href=''>
+        <img src="https://img.shields.io/badge/Process-Developing-yellow" alt="github stars"/>
+   </a>
+</p>
+
+<p align='center'>
+  <b>English</b> | <a href="https://github.com/code-innovator-zyx/wechat-gptbot/blob/main/README.md">简体中文</a> 
+</p>
 
 # 给孩子或宠物创建一个 GPT 机器人
 
@@ -123,11 +148,8 @@ func (p plugin) Args() []interface{} {
 
 - 无需适配手机端，支持公网访问，手机可直接访问和修改配置。
 
-|  ![登录](docs/登录.png) |   ![UI 界面](ui.png/img.png) |
-|----------------------|--------------------|
-
-
-
+| ![登录](docs/登录.png) | ![UI 界面](ui.png/img.png) |
+|--------------------|--------------------------|
 
 ## 聊天效果预览
 
@@ -170,12 +192,12 @@ func (p plugin) Args() []interface{} {
 - `/config/cron.json`: 定时执行插件计划
 
 3. 根据你个人信息修改配置文件`config.json` 和 提示词文件`prompt.conf`：
+
 - `proxy_url`：访问 OpenAPI 接口的代理地址。
 - `auth_token`：OpenAI 官网生成的 `SECRET KEY`。
 - `trigger_prefix`：微信对话中触发 AI 回复的前缀。
 - `context_status`：开启上下文聊天功能。
 
-    
 
 4. 运行服务,你可以选择两种运行方式：
 
