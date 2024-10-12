@@ -160,7 +160,7 @@ func (p plugin) Args() []interface{} {
 | ![私聊](docs/私聊.jpg)   |                    |
 | ![画图](docs/画图.jpg)   |                    |
 
-## 开始部署
+## 开始部署(两种部署方式)
 
 ### 一、环境准备
 
@@ -171,7 +171,7 @@ func (p plugin) Args() []interface{} {
 > 注：OpenAI 的域名 `https://api.openai.com` 在国内可能无法访问，需自行解决 API
 > 访问问题。推荐使用国内代理如 [https://api.v3.cm/register?aff=5KuW](https://api.v3.cm/register?aff=5KuW)。
 
-### 二、配置
+### 二、自己编译部署
 
 1. 克隆代码到本地：
 
@@ -208,6 +208,19 @@ func (p plugin) Args() []interface{} {
    # 2 docker运行
    make docker
    ```
+
+### 三、直接使用博主打包好的镜像
+
+```shell
+    # 1 下载docker-compose 文件
+    curl -L -o https://github.com/code-innovator-zyx/wechat-gptbot/releases/download/v1.2.3/docker-compose.yaml
+    # 2. 运行镜像
+    docker-compose up -d
+    
+```
+
+**建议**：将config 和token.json 挂载出来，具体原因见docker-compose
+**如果挂载config目录，需要先下载config目录下三个.template文件到本地config目录下**
 
 首次执行时，机器人会提示扫码登录微信。
 

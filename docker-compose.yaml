@@ -1,0 +1,19 @@
+version: '2.25'
+services:
+  wechat-gptbot:
+    image: 1003941268/wechat-gptbot:latest
+    container_name: wechat-bot
+    privileged: true
+    ports: # 内置一个ui可访问界面
+      - "8501:8501"
+    volumes: # 根据自己的实际挂载路径进行调整
+      # 将token  挂载出来，这样每次重启不用再扫码登录了，记录了登录信息
+      - ./token.json:/code/token.json
+      # 挂载配置文件路径
+      - ./config:/code/config
+    network_mode: bridge
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always
+    sysctls:
+      net.core.somaxconn: 16384
